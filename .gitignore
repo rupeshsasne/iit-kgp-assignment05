@@ -1,0 +1,49 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtualenv / Poetry
+.venv/
+dist/
+build/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local vector store and model caches
+chroma_db/
+logistics_rag/
+*.sqlite3
+.cache/
+hf_cache/
+nltk_data/
+**/huggingface/
+**/transformers/
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.ckpt
+*.onnx
+
+# Starter bundle (documents are already unpacked)
+*.zip
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+*.pem
+credentials.json
