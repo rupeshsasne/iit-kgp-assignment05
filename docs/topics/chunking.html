@@ -10,7 +10,7 @@
   <header>
     <p class="kicker"><a href="../index.html">Briefing</a> · study note</p>
     <h1>Chunking and overlap</h1>
-    <p class="lede">Why a 5,000-character policy has to be cut before it is retrieved, and what 800 and 120 actually do. The ten files are now 68 chunks. One chunk still needs a close look.</p>
+    <p class="lede">Why a 5,000-character policy has to be cut before it is retrieved, and what 800 and 120 actually do. The ten files are now 68 chunks. The first of those is a 568-character slice of the breach-reporting SOP.</p>
   </header>
   <nav>
     <ul>
@@ -41,7 +41,8 @@
     <p>The splitter may also add its own keys, such as a start index, if you ask it to. We do not need extra keys for the grade. We do need the four we already stored.</p>
 
     <h2>What the notebook showed</h2>
-    <p>Cell <code>fb921912</code> defines <code>split_documents</code>. The saved output is <code>(800, 120)</code>. Cell <code>5e5dc5de</code> runs it on all ten documents and stores the list as <code>chunks</code>. Cell <code>b575dc14</code> prints <code>len(chunks)</code>, and the saved output is 68. The longest chunk is 798 characters, under the cap of 800. Metadata on a chunk is still <code>file_name</code>, <code>category</code>, <code>file_type</code>, and <code>source</code>. The notebook has not yet printed a sample chunk's text.</p>
+    <p>Cell <code>fb921912</code> defines <code>split_documents</code>. The saved output is <code>(800, 120)</code>. Cell <code>5e5dc5de</code> runs it on all ten documents and stores the list as <code>chunks</code>. Cell <code>b575dc14</code> prints <code>len(chunks)</code>, and the saved output is 68. The longest chunk is 798 characters, under the cap of 800.</p>
+    <p>Cell <code>435da97a</code> prints <code>chunks[0]</code>. It is 568 characters. The file name is <code>SOP-COM-015_Regulatory_Breach_Report.md</code>, the category is <code>compliance</code>, and the file type is <code>md</code>. The opening text is the SOP header and the start of the Purpose section, which is a slice of the policy rather than the whole file. Metadata keys are still <code>file_name</code>, <code>category</code>, <code>file_type</code>, and <code>source</code>.</p>
 
     <h2>What to look at when the rest of the section exists</h2>
     <ul>

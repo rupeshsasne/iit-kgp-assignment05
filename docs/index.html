@@ -37,7 +37,7 @@
         <tr><td>1.4.1 Define <code>split_documents</code> (800 / 120)</td><td rowspan="4">12</td><td><span class="tag done">done</span></td></tr>
         <tr><td>1.4.1 Generate chunks for every file</td><td><span class="tag done">done</span></td></tr>
         <tr><td>1.4.1 Chunk count</td><td><span class="tag done">done</span></td></tr>
-        <tr><td>1.4.1 Inspect one chunk</td><td><span class="tag todo">next</span></td></tr>
+        <tr><td>1.4.1 Inspect one chunk</td><td><span class="tag done">done</span></td></tr>
         <tr><td>2.1.1 MiniLM embeddings</td><td>5</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>2.1.2 Chroma <code>logistics_rag</code></td><td>11</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>2.2.1 RAG chain, k=4, temperature 0</td><td>12</td><td><span class="tag todo">later</span></td></tr>
@@ -173,13 +173,17 @@
 
     <article class="cell" id="cell-b575dc14">
       <h3>1.4.1 Chunk count <span class="tag done">done</span></h3>
-      <p>Cell <code>b575dc14</code> prints <code>len(chunks)</code>. The saved output is 68. That is more than the 10 files, which is what 800-character slices of these policies should produce. The longest chunk is 798 characters, and each chunk still has <code>file_name</code>, <code>category</code>, <code>file_type</code>, and <code>source</code>. Inspecting one chunk is the remaining cell in this section. Study note: <a href="topics/chunking.html">Chunking and overlap</a>.</p>
+      <p>Cell <code>b575dc14</code> prints <code>len(chunks)</code>. The saved output is 68. That is more than the 10 files, which is what 800-character slices of these policies should produce. The longest chunk is 798 characters, and each chunk still has <code>file_name</code>, <code>category</code>, <code>file_type</code>, and <code>source</code>. Study note: <a href="topics/chunking.html">Chunking and overlap</a>.</p>
+    </article>
+
+    <article class="cell" id="cell-435da97a">
+      <h3>1.4.1 Inspect one chunk <span class="tag done">done</span></h3>
+      <p>Cell <code>435da97a</code> takes <code>chunks[0]</code> and prints its metadata, its length, and the first 400 characters. The chunk is 568 characters from <code>SOP-COM-015_Regulatory_Breach_Report.md</code>, category <code>compliance</code>, file type <code>md</code>. The text is the document header and the start of section 1, Purpose, not the whole SOP. The four metadata keys are still there. Study note: <a href="topics/chunking.html">Chunking and overlap</a>.</p>
     </article>
 
     <h2 id="ahead">Still to build</h2>
     <p>Read the matching study note before each stub. The notebook stubs, in order:</p>
     <ol>
-      <li>Inspect one chunk: text is a slice of a policy, and metadata still names the file.</li>
       <li>Load MiniLM-L6-v2 as <code>HuggingFaceEmbeddings</code>. No <code>device=</code> argument.</li>
       <li>Put the chunks in a persistent Chroma collection named <code>logistics_rag</code> and check the vector count.</li>
       <li>Build the chain: retriever with <code>k=4</code>, a context formatter, a grounded prompt, and <code>llama3.2:3b</code> at temperature 0.</li>
