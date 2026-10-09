@@ -89,7 +89,13 @@ Total: 100 marks. Libraries cell is setup (0 marks) - leave the pip comments com
    outputs does not count. Success means the saved output has no traceback and
    matches the brief. On failure, fix the cell and run it again. Do not commit
    a failing cell.
-5. Ollama must already be serving `llama3.2:3b` before any generation cell.
+5. After that successful notebook run, update `docs/index.html` before the commit.
+   Mark the section done in the status table. Add or replace an article under
+   `#built` with `id="cell-<cell id>"`: the concept in plain language, what the
+   cell did, and the numbers from the saved output. Move that item out of
+   `#ahead`. Do not paste the whole cell. A short snippet is enough. If the run
+   failed, leave the page unchanged.
+6. Ollama must already be serving `llama3.2:3b` before any generation cell.
    If it is missing, the run failed: do not commit, and say so. Do not switch models.
 
 ## No confirmation prompts
@@ -195,7 +201,7 @@ one `chunks` list, one `vectordb`, one `rag_chain`).
 1. Read the target cell and the brief above it.
 2. Fill that cell only (hint comment kept).
 3. Make it work, then commit. Execute the filled cell in the notebook with the project `.venv` kernel (`nbclient` or Jupyter) so its output is stored in the `.ipynb`. Replay earlier filled code cells in that kernel. Skip the pip-install cell and later stubs. A separate Python script is not enough. Validate the saved output: no traceback, and it matches the brief. If it fails, fix and re-run. Do not commit until that notebook run succeeds.
-4. After a successful run, commit and push. Stage only the notebook (and this skill if it changed in the same run). Leave `.venv`, caches, and secrets unstaged. One commit, message in the repo style: one sentence on why the block changed. Then `git push` `main` to `origin`. Do not change git config, do not force-push, do not amend. If HTTPS cannot prompt for a username, push with `git -c url.git@github.com:.insteadOf=https://github.com/ push origin main` and leave the remote URL as HTTPS. Skip the commit when the cell was left unchanged or the run still fails.
+4. After a successful run, update `docs/index.html` as in Invocation step 5, then commit and push. Stage the notebook, `docs/index.html`, and this skill if it changed in the same run. Leave `.venv`, caches, and secrets unstaged. One commit, message in the repo style: one sentence on why the block changed. Then `git push` `main` to `origin`. Do not change git config, do not force-push, do not amend. If HTTPS cannot prompt for a username, push with `git -c url.git@github.com:.insteadOf=https://github.com/ push origin main` and leave the remote URL as HTTPS. Skip the commit when the cell was left unchanged or the run still fails.
 5. Reply in 1-3 short lines: what you filled (section + cell id), what to re-run, and the commit that was pushed. If the run failed, say the error and that nothing was committed.
 
 ## Style detail

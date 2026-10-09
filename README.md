@@ -6,6 +6,13 @@ Poetry-managed environment for `Logistics_Operations_RAG_Assistant_Starter.ipynb
 Works on macOS (Apple Silicon) and Windows. CPU is enough. Apple Silicon uses MPS.
 On Windows, Ollama uses an NVIDIA GPU when one is present.
 
+## Briefing
+
+Read [docs/index.html](docs/index.html) before the notebook. It explains the assignment, the fixed spec, the ideas behind each section, and what each solved cell did. The page is updated after every cell that runs cleanly.
+
+GitHub Pages, once enabled on `main` / `docs`, serves it at
+`https://rupeshsasne.github.io/iit-kgp-assignment05/`.
+
 ## Prerequisites
 
 - Python 3.12 (3.10 or 3.11 also satisfy `requires-python`)
