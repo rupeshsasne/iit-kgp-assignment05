@@ -191,8 +191,8 @@ one `chunks` list, one `vectordb`, one `rag_chain`).
 1. Read the target cell and the brief above it.
 2. Fill that cell only (hint comment kept).
 3. Run it on the project `.venv` when the cell is cheap and its inputs already exist.
-4. No git commit unless the user asks.
-5. Reply in 1-3 short lines: what you filled (section + cell id) and what to re-run.
+4. Commit and push that block before the reply. Stage only the notebook (and this skill if it changed in the same run). Leave `.venv`, caches, and secrets unstaged. One commit, message in the repo style: one sentence on why the block changed. Then `git push` `main` to `origin`. Do not change git config, do not force-push, do not amend. If HTTPS cannot prompt for a username, push with `git -c url.git@github.com:.insteadOf=https://github.com/ push origin main` and leave the remote URL as HTTPS. If the block was left unchanged, skip the commit.
+5. Reply in 1-3 short lines: what you filled (section + cell id), what to re-run, and the commit that was pushed.
 
 ## Style detail
 

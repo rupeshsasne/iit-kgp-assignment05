@@ -18,5 +18,5 @@ Rules for this run:
 - **Keyboard characters only** in anything you write into the notebook. No emoji, smart quotes, em/en dashes, or arrows.
 - Conclusion prose (section 4 only): first person or impersonal - never "you"/"your".
 - **Do not ask** keep/discard/confirm.
-- Do not git-commit unless asked.
-- Reply in 1-3 short lines: what changed (section and cell id) and what to re-run.
+- After the block is filled, commit the notebook and push `main` to `origin`. Skip the commit only when the cell was left unchanged.
+- Reply in 1-3 short lines: what changed (section and cell id), what to re-run, and the commit that was pushed.
