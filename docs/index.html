@@ -25,7 +25,7 @@
   </nav>
   <main>
     <h2 id="status">Where we are</h2>
-    <p>Section 1 through the chunk splitter is in the notebook and has saved outputs. The splitter still has to be run on every file. This page is updated after every cell that runs cleanly.</p>
+    <p>Section 1 through the chunk count is in the notebook and has saved outputs. One chunk still needs a close look. This page is updated after every cell that runs cleanly.</p>
     <table>
       <thead><tr><th>Section</th><th>Marks</th><th>State</th></tr></thead>
       <tbody>
@@ -34,8 +34,9 @@
         <tr><td>1.3.1 Lengths</td><td>4</td><td><span class="tag done">done</span></td></tr>
         <tr><td>1.3.2 Word frequencies</td><td>6</td><td><span class="tag done">done</span></td></tr>
         <tr><td>1.3.3 TF-IDF similarity</td><td>6</td><td><span class="tag done">done</span></td></tr>
-        <tr><td>1.4.1 Define <code>split_documents</code> (800 / 120)</td><td rowspan="2">12</td><td><span class="tag done">done</span></td></tr>
-        <tr><td>1.4.1 Run it on every file, count the chunks, inspect one</td><td><span class="tag todo">next</span></td></tr>
+        <tr><td>1.4.1 Define <code>split_documents</code> (800 / 120)</td><td rowspan="3">12</td><td><span class="tag done">done</span></td></tr>
+        <tr><td>1.4.1 Chunk count</td><td><span class="tag done">done</span></td></tr>
+        <tr><td>1.4.1 Inspect one chunk</td><td><span class="tag todo">next</span></td></tr>
         <tr><td>2.1.1 MiniLM embeddings</td><td>5</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>2.1.2 Chroma <code>logistics_rag</code></td><td>11</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>2.2.1 RAG chain, k=4, temperature 0</td><td>12</td><td><span class="tag todo">later</span></td></tr>
@@ -161,13 +162,18 @@
 
     <article class="cell" id="cell-fb921912">
       <h3>1.4.1 Define the splitter <span class="tag done">done</span></h3>
-      <p>Cell <code>fb921912</code> defines <code>split_documents</code>. It builds a <code>RecursiveCharacterTextSplitter</code> at 800 characters with overlap 120 and returns <code>split_documents</code> on the document list, which copies metadata onto each chunk. The cell output is <code>(800, 120)</code>. Calling it on the compliance SOP alone yields 5 chunks, the four metadata keys, and a longest piece of 795 characters. The cells that run it on every file, count the chunks, and inspect one are still empty. Study note: <a href="topics/chunking.html">Chunking and overlap</a>.</p>
+      <p>Cell <code>fb921912</code> defines <code>split_documents</code>. It builds a <code>RecursiveCharacterTextSplitter</code> at 800 characters with overlap 120 and copies metadata onto each chunk. The cell output is <code>(800, 120)</code>. Study note: <a href="topics/chunking.html">Chunking and overlap</a>.</p>
+    </article>
+
+    <article class="cell" id="cell-b575dc14">
+      <h3>1.4.1 Chunk count <span class="tag done">done</span></h3>
+      <p>Cell <code>b575dc14</code> sets <code>chunks = split_documents(docs)</code> and the saved output is 68. That is more than the 10 files, which is what 800-character slices of these policies should produce. The longest chunk is 798 characters, and each chunk still has <code>file_name</code>, <code>category</code>, <code>file_type</code>, and <code>source</code>. Inspecting one chunk is the remaining cell in this section. Study note: <a href="topics/chunking.html">Chunking and overlap</a>.</p>
     </article>
 
     <h2 id="ahead">Still to build</h2>
     <p>Read the matching study note before each stub. The notebook stubs, in order:</p>
     <ol>
-      <li>Run <code>split_documents</code> on <code>docs</code>, count the chunks, and inspect one.</li>
+      <li>Inspect one chunk: text is a slice of a policy, and metadata still names the file.</li>
       <li>Load MiniLM-L6-v2 as <code>HuggingFaceEmbeddings</code>. No <code>device=</code> argument.</li>
       <li>Put the chunks in a persistent Chroma collection named <code>logistics_rag</code> and check the vector count.</li>
       <li>Build the chain: retriever with <code>k=4</code>, a context formatter, a grounded prompt, and <code>llama3.2:3b</code> at temperature 0.</li>

@@ -10,7 +10,7 @@
   <header>
     <p class="kicker"><a href="../index.html">Briefing</a> · study note</p>
     <h1>Chunking and overlap</h1>
-    <p class="lede">Why a 5,000-character policy has to be cut before it is retrieved, and what 800 and 120 actually do. The splitter function is in the notebook. Applying it to every file is the next cell.</p>
+    <p class="lede">Why a 5,000-character policy has to be cut before it is retrieved, and what 800 and 120 actually do. The ten files are now 68 chunks. One chunk still needs a close look.</p>
   </header>
   <nav>
     <ul>
@@ -41,7 +41,7 @@
     <p>The splitter may also add its own keys, such as a start index, if you ask it to. We do not need extra keys for the grade. We do need the four we already stored.</p>
 
     <h2>What the notebook showed</h2>
-    <p>Cell <code>fb921912</code> defines <code>split_documents</code>. The saved output is <code>(800, 120)</code>. The function has not yet been applied to the full <code>docs</code> list in the notebook. A check on the first file only, the compliance SOP, produced 5 chunks. Each kept <code>file_name</code>, <code>category</code>, <code>file_type</code>, and <code>source</code>. The longest of those five pieces was 795 characters, under the cap of 800. The count for all ten files is the next cell.</p>
+    <p>Cell <code>fb921912</code> defines <code>split_documents</code>. The saved output is <code>(800, 120)</code>. Cell <code>b575dc14</code> runs that function on all ten documents. The saved count is 68. The longest chunk is 798 characters, under the cap of 800. Metadata on a chunk is still <code>file_name</code>, <code>category</code>, <code>file_type</code>, and <code>source</code>. The notebook has not yet printed a sample chunk's text.</p>
 
     <h2>What to look at when the rest of the section exists</h2>
     <ul>
