@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The RAG chain — Assignment 05</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <p class="kicker"><a href="../index.html">Briefing</a> · study note</p>
+    <h1>The RAG chain</h1>
+    <p class="lede">Retriever, context string, grounded prompt, Llama 3.2 at temperature 0, and the file names beside the answer.</p>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="../index.html">Briefing</a></li>
+      <li><a href="rag.html">RAG</a></li>
+      <li><a href="chroma.html">Chroma</a></li>
+      <li><a href="rag-chain.html">Chain</a></li>
+      <li><a href="evaluation.html">Evaluation</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h2>Four stages, one object</h2>
+    <p>A chain here is a function from a question string to an answer string, with the retrieved documents available beside it. The imports already in the notebook are the pieces: a retriever, <code>ChatPromptTemplate</code>, <code>init_chat_model</code>, <code>RunnablePassthrough</code>, and <code>StrOutputParser</code>. You do not need a new framework.</p>
+    <ol>
+      <li><strong>Retrieve.</strong> <code>vectordb.as_retriever(search_kwargs={"k": 4})</code> returns four chunks. See <a href="chroma.html">Chroma</a>.</li>
+      <li><strong>Format.</strong> Join those chunks into one context string. Include the file name in the string, or keep the documents alongside, so the printer can list sources. A join with a blank line between chunks is enough. A labelled block ("Source: SOP-COM-015...") makes the model's job and the reader's job the same job.</li>
+      <li><strong>Prompt.</strong> The prompt has the context and the question. The instruction has to say: answer from the context, and if the context does not contain the fact, say so. Without that sentence the model treats the chunks as a hint and fills the gaps from pretraining. That is the failure the unsupported-question test is designed to catch.</li>
+      <li><strong>Model.</strong> <code>init_chat_model("llama3.2:3b", model_provider="ollama", temperature=0)</code>. The parser turns the message object into a string.</li>
+    </ol>
+
+    <h2>Temperature 0</h2>
+    <p>Temperature scales the randomness of the next-token distribution. Zero asks for the most likely token at each step, greedily. The same question then tends to produce the same answer, which is what you want when you are about to score the answer against a reference. It does not make the model factual. A confidently wrong paraphrase at temperature 0 is still wrong. It does make a second run less likely to drift into a different wording and a different similarity score for no reason.</p>
+    <p>Ollama has to be running and <code>llama3.2:3b</code> has to be pulled before this cell. The Python package <code>langchain-ollama</code> only speaks to the local server. It does not download the weights. If the server is down, the cell fails. Do not swap in another model name to make the error go away. The brief names this one.</p>
+    <p>Llama 3.2 3B is a small model. On these policies it will miss nuance, collapse a table into a vague sentence, or copy a number from the wrong row if several rows were retrieved together. That is a limitation to write about in the conclusion, not a reason to change the spec.</p>
+
+    <h2>Sources are part of the answer</h2>
+    <p>The graded behaviour in section 2.2.2 is an answer plus the file names of the chunks that were retrieved. File names come from metadata, not from the model's prose. If you ask the model to "cite sources" and then trust the names it types, it can cite a file it was not shown. Print <code>metadata["file_name"]</code> from the four documents the retriever returned. Deduplicate them if two chunks share a file. The reader should be able to open those files and find the passage.</p>
+
+    <h2>One question is enough for this section</h2>
+    <p>The cell asks for a single logistics question as a smoke test, not the five-question eval set. Pick a fact you have seen in a file, for example a reporting window or a named role, so you can judge the smoke test by eye. The systematic set comes in section 3. If the smoke test names the right file and the sentence is in the right neighbourhood, the chain is wired. If it names a file from the wrong folder, fix retrieval or the prompt before writing five questions.</p>
+    <p class="note" style="color:#5c564c">Next: <a href="evaluation.html">evaluation</a>.</p>
+  </main>
+</body>
+</html>

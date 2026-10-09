@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chroma — Assignment 05</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <p class="kicker"><a href="../index.html">Briefing</a> · study note</p>
+    <h1>Chroma</h1>
+    <p class="lede">The local store that keeps MiniLM vectors and returns the nearest chunks. Collection name: <code>logistics_rag</code>.</p>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="../index.html">Briefing</a></li>
+      <li><a href="embeddings.html">Embeddings</a></li>
+      <li><a href="chroma.html">Chroma</a></li>
+      <li><a href="rag-chain.html">Chain</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h2>What we need from a database</h2>
+    <p>After <a href="embeddings.html">MiniLM</a> encodes a chunk, we have a 384-float vector plus the text plus the metadata. A Python list of those triples would answer a toy query. It would also recompute every vector every time the notebook restarts, and the retrieval code would be a hand-written loop. Chroma is the small database that holds the triples and answers "which stored vectors are closest to this query vector?"</p>
+    <p>Closest, here, is cosine distance in the embedding space, because that is the distance we asked the embedding function to live in. You do not pass the TF-IDF matrix in. Different space, different index.</p>
+
+    <h2>Collection, persistence, count</h2>
+    <p>A collection is a named table of vectors inside Chroma. The brief names it <code>logistics_rag</code>. Use that string. A default name like <code>"langchain"</code> will run and will not match the brief.</p>
+    <p>Persistent means the vectors are written under a directory on disk, not only in the process. The next kernel restart can open the same collection instead of re-embedding. The directory is a cache. It is gitignored. Teammates rebuild it by running the cell. Do not commit the sqlite file.</p>
+    <p>The check after the load is the number of vectors. It must equal the number of chunks. A smaller count means a batch failed or the collection was opened from an older run and appended to. If you see double the chunk count, the cell added the same chunks twice. Delete the persist directory and run once, or open with a clean collection before adding.</p>
+
+    <h2>What gets stored besides the vector</h2>
+    <p>Chroma stores the document text and the metadata dictionary beside the vector. That is how a hit can return <code>file_name</code> without a second lookup. If metadata was dropped at chunking time, the vector search still "works" and the answer function has nothing to print. The failure shows up in section 2.2.2, not in the count.</p>
+
+    <h2>Querying</h2>
+    <p>A retriever with <code>k=4</code> embeds the question with the same <code>HuggingFaceEmbeddings</code> object, asks the collection for four neighbours, and returns four <code>Document</code>s. Four is the brief. <code>k=3</code> or <code>k=5</code> changes the context the model sees and the retrieval-similarity score. Leave it at 4.</p>
+    <p>The first time this cell runs it will feel slow, because it encodes every chunk. On this corpus that is seconds to a minute, not a training job. If it appears hung, it is usually the model download or the first encode, not Chroma itself.</p>
+    <p class="note" style="color:#5c564c">Next: <a href="rag-chain.html">the RAG chain</a>.</p>
+  </main>
+</body>
+</html>

@@ -8,7 +8,7 @@ On Windows, Ollama uses an NVIDIA GPU when one is present.
 
 ## Briefing
 
-Read [docs/index.html](docs/index.html) before the notebook. It explains the assignment, the fixed spec, the ideas behind each section, and what each solved cell did. The page is updated after every cell that runs cleanly.
+Read [docs/index.html](docs/index.html) before the notebook. The study notes linked from that page (`docs/topics/`) explain each idea in full, including the formulas the notebook runs. The index is updated after every cell that runs cleanly.
 
 GitHub Pages, once enabled on `main` / `docs`, serves it at
 `https://rupeshsasne.github.io/iit-kgp-assignment05/`.

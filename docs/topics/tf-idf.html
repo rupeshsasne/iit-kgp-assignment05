@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TF-IDF — Assignment 05</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <p class="kicker"><a href="../index.html">Briefing</a> · study note</p>
+    <h1>TF-IDF</h1>
+    <p class="lede">Term frequency, inverse document frequency, and the exact weighting scikit-learn applies in the similarity cell. A three-document example is worked through to the normalised vector.</p>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="../index.html">Briefing</a></li>
+      <li><a href="rag.html">RAG</a></li>
+      <li><a href="documents.html">Documents</a></li>
+      <li><a href="word-frequency.html">Words</a></li>
+      <li><a href="tf-idf.html">TF-IDF</a></li>
+      <li><a href="cosine-similarity.html">Cosine</a></li>
+      <li><a href="chunking.html">Chunks</a></li>
+      <li><a href="embeddings.html">Embeddings</a></li>
+      <li><a href="chroma.html">Chroma</a></li>
+      <li><a href="rag-chain.html">Chain</a></li>
+      <li><a href="evaluation.html">Evaluation</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h2>The problem raw counts do not solve</h2>
+    <p>Suppose we compared the ten AeroVelo files by counting how often each word appears. Two distortions show up immediately.</p>
+    <p>The first is length. The EMEA remote-work policy is 5,599 characters after cleaning. The governance PDF extract is 1,394. A long file gets more chances to mention "regional", "document", or "avl", so it would look more related to everything, including files it barely shares a subject with.</p>
+    <p>The second is common vocabulary. In this corpus the most frequent non-stopword is "regional" (67 times), then "avl" (55). Those words are real, but they show up because the company writes about itself. A word that is in nine of the ten files does not tell you whether two particular files are about the same procedure.</p>
+    <p>TF-IDF is a weight that pushes back on both distortions. It raises words that are repeated inside one file, and it lowers words that are spread across the collection. After the weighting, each file is a list of numbers, one per word in the vocabulary. Comparing those lists is a later step, <a href="cosine-similarity.html">cosine similarity</a>. This page is only about how the numbers are built.</p>
+
+    <h2>Two factors</h2>
+    <p><strong>Term frequency</strong>, tf, is local to one document. In the simplest version, which is the one our cell uses, tf is the raw count: if "remote" appears twice in a file, tf is 2. Some textbooks replace that with <code>1 + ln(tf)</code> so the tenth occurrence counts less than the second. scikit-learn can do that (<code>sublinear_tf=True</code>). The notebook leaves the default, so counts stay linear.</p>
+    <p><strong>Inverse document frequency</strong>, idf, is global. Document frequency df(t) is the number of documents that contain term t at least once, not the number of times it appears. A term in 2 of 10 files is more specific than a term in 9 of 10. IDF turns that into a multiplier greater than zero.</p>
+    <p>The weight of term t in document d is the product:</p>
+    <p class="formula">tfidf(t, d) = tf(t, d) * idf(t)</p>
+    <p>A word absent from a document has tf 0, so its weight is 0. The vector is mostly zeros. That is why people call TF-IDF a sparse representation: the vocabulary of ten policy documents is thousands of columns wide, and each row only fills the columns for words that file actually used.</p>
+
+    <h2>The formula the notebook runs</h2>
+    <p>Many lecture notes write <code>idf = ln(n / df)</code>. That is the idea, and it is not what <code>TfidfVectorizer</code> computes. The cell calls</p>
+    <pre>TfidfVectorizer(stop_words="english")</pre>
+    <p>Every argument we did not pass stays at the library default. The ones that change the math are:</p>
+    <table>
+      <thead><tr><th>Argument</th><th>Default</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr><td><code>smooth_idf</code></td><td>True</td><td>Adds 1 to the document count and to df, so a term that is in every file still has a finite idf.</td></tr>
+        <tr><td><code>sublinear_tf</code></td><td>False</td><td>Term frequency is the raw count.</td></tr>
+        <tr><td><code>use_idf</code></td><td>True</td><td>The idf multiplier is applied. Turning it off would leave pure term frequency.</td></tr>
+        <tr><td><code>norm</code></td><td><code>"l2"</code></td><td>Each document vector is divided by its Euclidean length, so the row has length 1.</td></tr>
+      </tbody>
+    </table>
+    <p>With smoothing, and with <code>n</code> documents, scikit-learn uses the natural log:</p>
+    <p class="formula">idf(t) = ln( (1 + n) / (1 + df(t)) ) + 1</p>
+    <p>The trailing <code>+ 1</code> keeps idf from collapsing toward zero for terms that are merely common, and it guarantees every observed term keeps a positive multiplier. Without smoothing, a term that appears in every document would have <code>ln(1) = 0</code> and would be deleted from the comparison entirely. Smoothing is the safer default for a ten-file folder where "avl" really is everywhere.</p>
+    <p>The tokeniser is also a default, not something we wrote. The pattern <code>\b\w\w+\b</code> keeps tokens of two or more word characters. "A" alone is dropped. Digits can survive, so a document id such as a policy number can become a feature. <code>stop_words="english"</code> then removes scikit-learn's built-in English list. That list is not the same object as the NLTK list used in the word-frequency cell. A word can be counted in section 1.3.2 and still be deleted here, or the other way around. The two cells are answering different questions.</p>
+
+    <h2>A worked example</h2>
+    <p>Three tiny documents, small enough to finish by hand. They are not the AeroVelo files. They are a sketch of the same situation: two texts that share a subject, and one that does not.</p>
+    <ol>
+      <li><code>remote remote work policy</code></li>
+      <li><code>remote work staff</code></li>
+      <li><code>battery supplier module</code></li>
+    </ol>
+    <p>No term here is on the English stop list, so <code>n = 3</code> and the vocabulary is battery, module, policy, remote, staff, supplier, work. Document frequency and idf:</p>
+    <table>
+      <thead><tr><th>Term</th><th>df</th><th>idf = ln((1+3)/(1+df)) + 1</th></tr></thead>
+      <tbody>
+        <tr><td>policy, staff, battery, supplier, module</td><td>1</td><td>ln(4/2) + 1 = 1.6931</td></tr>
+        <tr><td>remote, work</td><td>2</td><td>ln(4/3) + 1 = 1.2877</td></tr>
+      </tbody>
+    </table>
+    <p>"Remote" is the distinctive word of the first document in ordinary reading, but it also appears in the second document, so its idf is lower than "policy", which appears in only one. That is the whole point of the second factor. Repetition still matters, because term frequency multiplies this weight. In document 1, "remote" has tf 2, so its unnormalised weight is <code>2 * 1.2877 = 2.5754</code>. "Policy" has tf 1 and weight 1.6931. "Work" has weight 1.2877.</p>
+    <p>Those three numbers are the non-zero entries of document 1. The Euclidean length of that vector is the square root of the sum of squares, about 3.341. Dividing each weight by 3.341 is the L2 normalisation. scikit-learn's row for document 1, rounded to four decimals, is:</p>
+    <table>
+      <thead><tr><th></th><th>policy</th><th>remote</th><th>work</th></tr></thead>
+      <tbody>
+        <tr><td>Document 1, after L2</td><td>0.5069</td><td>0.7710</td><td>0.3855</td></tr>
+        <tr><td>Document 2, after L2</td><td>0</td><td>0.5179</td><td>0.5179</td></tr>
+      </tbody>
+    </table>
+    <p>Document 2 also has staff at 0.6809. Document 3's three terms each land at 0.5774, and it shares no columns with the first two. The cosine between document 1 and document 2 is the dot product of the unit vectors, 0.5989. The cosine between document 1 and document 3 is 0. The same call on the real corpus is what produced the 0.884 between the two remote-work policies. The arithmetic is identical. Only the vocabulary is larger.</p>
+    <p>L2 normalisation is why a longer file does not automatically win. After the division, every document vector has length 1. Extra copies of a word still change the direction of the vector, because they change the relative weight of that coordinate, but they do not stretch the arrow. <a href="cosine-similarity.html">Cosine similarity</a> then only looks at the angle.</p>
+
+    <h2>What the notebook cell is doing</h2>
+    <p>The cell fits one vectoriser on all ten <code>page_content</code> strings at once. Fitting on the whole collection is required: idf is undefined until df has been counted across documents. Transforming a single file in isolation would invent a different idf and the rows would not be comparable.</p>
+    <p>The matrix <code>X</code> has 10 rows. The column count is the size of the vocabulary after stopword removal and the two-character token rule. We do not print that width. We immediately turn the rows into a 10 by 10 cosine matrix and label both axes with file names. The matrix is the object to read. Individual word weights are intermediate.</p>
+    <p>The closest off-diagonal pair is the EMEA remote-work policy and the US remote-work policy, cosine 0.884. Both files are long HR policies about the same subject, so they share many mid-frequency terms ("remote", "work", leave rules, equipment) and those terms are not evenly spread across finance, legal, and the bill of materials. Their vectors point nearly the same way. A bill of materials and the breach-reporting SOP share little of that vocabulary, so their cosine stays low. The diagonal is exactly 1 because each file's angle with itself is zero. We drop those pairs before ranking, or the closest pair would always be a file with itself.</p>
+
+    <h2>What this score is not</h2>
+    <p>0.884 is not 88.4 percent accuracy, and it is not a probability. It is the cosine of an angle in a word-weight space. Two files can score high because they reuse the same boilerplate ("AeroVelo Logistics Global", "regional", "approved by") even when the operative rule differs. Two files can score low even when a human would say they are about the same thing, if one says "employee" and the other says "staff member" and the strings never overlap. TF-IDF has no synonyms and no word order. "Breach must be reported" and "reported breach must" are the same bag of words.</p>
+    <p>That limit is why section 1.3 stops at analysis, and section 2 retrieves with <a href="embeddings.html">MiniLM embeddings</a> instead of this matrix. The TF-IDF cell is there to show the shape of the collection: which whole documents sit near each other when only shared words count. It is not the index the assistant searches.</p>
+
+    <h2>How to read the cell without re-deriving it</h2>
+    <ol>
+      <li><code>names</code> is the label list, taken from metadata so the matrix is readable.</li>
+      <li><code>fit_transform</code> learns idf on these ten strings and emits the L2-normalised TF-IDF rows.</li>
+      <li><code>cosine_similarity</code> produces the 10 by 10 matrix. See the cosine note for the geometry.</li>
+      <li><code>sim_df</code> is that matrix with file names on both axes, rounded to three decimals for display. The unrounded matrix stays in <code>sim</code>.</li>
+      <li>The pair loop keeps <code>i &lt; j</code>, sorts descending, and <code>pairs[0]</code> is the nearest pair of different files.</li>
+    </ol>
+    <p class="callout">If a later edit fits the vectoriser on chunks instead of whole documents, the idf values change, because "document" in df would then mean "chunk". The brief for this cell is whole-document similarity. Leave that fit on <code>docs</code>.</p>
+    <p class="note" style="color:#5c564c">Next: <a href="cosine-similarity.html">cosine similarity</a>. Back to the <a href="../index.html#cell-d0ad48d7">cell write-up</a>.</p>
+  </main>
+</body>
+</html>

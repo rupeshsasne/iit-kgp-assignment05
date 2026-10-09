@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Documents, PDF text, and cleaning — Assignment 05</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <p class="kicker"><a href="../index.html">Briefing</a> · study note</p>
+    <h1>Documents, PDF text, and cleaning</h1>
+    <p class="lede">How a file on disk becomes a <code>Document</code>, why the governance PDF is a different object from the Markdown, and what the whitespace pass is allowed to change.</p>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="../index.html">Briefing</a></li>
+      <li><a href="rag.html">RAG</a></li>
+      <li><a href="documents.html">Documents</a></li>
+      <li><a href="word-frequency.html">Words</a></li>
+      <li><a href="chunking.html">Chunks</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h2>The unit the rest of the notebook holds</h2>
+    <p>LangChain's <code>Document</code> is a small object with two fields. <code>page_content</code> is a string, the text we will split, embed, and show to the model. <code>metadata</code> is a dictionary that rides along and is not embedded. Retrieval returns documents, not bare strings. If the file name is only in a local variable that went out of scope, the answer function cannot print a source. That is the entire reason metadata exists in this assignment.</p>
+    <p>The brief names four keys. We use exactly these:</p>
+    <table>
+      <thead><tr><th>Key</th><th>Value</th><th>Why it has to survive chunking</th></tr></thead>
+      <tbody>
+        <tr><td><code>file_name</code></td><td><code>SOP-COM-015_Regulatory_Breach_Report.md</code></td><td>This is what we print next to an answer.</td></tr>
+        <tr><td><code>category</code></td><td>the parent folder, such as <code>compliance</code></td><td>The dataset is grouped by business function. The folder is that label.</td></tr>
+        <tr><td><code>file_type</code></td><td><code>md</code> or <code>pdf</code></td><td>So a later check can tell an extract from the original Markdown.</td></tr>
+        <tr><td><code>source</code></td><td>the path</td><td>So a person can open the file that was retrieved.</td></tr>
+      </tbody>
+    </table>
+    <p>Category is <code>path.parent.name</code>, not a hand-written map. The folder names already are the categories in the brief: compliance, finance, governance, hr, legal, operations, pdfs, supply_chain.</p>
+
+    <h2>Finding the files</h2>
+    <p><code>Path.rglob</code> walks every nested folder. The filter keeps regular files whose suffix is <code>.md</code> or <code>.pdf</code>, case-insensitive. Sorted order makes the first document stable: the compliance SOP, because "compliance" sorts before "finance". There are 10 files. Nine are Markdown. One is the PDF of the regional governance matrix, which also exists as Markdown under <code>governance/</code>. Both are loaded. The brief says every Markdown and every PDF, and dropping the PDF because a twin exists would be a choice the brief did not offer.</p>
+
+    <h2>Markdown is text. A PDF is not.</h2>
+    <p>A Markdown file is opened as UTF-8 and the string is the document. A PDF is a sequence of drawing instructions that usually include the text. <code>PdfReader</code> walks the pages and calls <code>extract_text</code> on each. We join those page strings with newlines. If a page has no extractable text, that page contributes an empty string rather than crashing.</p>
+    <p>Extraction is lossy. Columns, headers, and line breaks are reconstructed heuristically. On this corpus you can see the damage in the lengths. The governance Markdown is about 4,968 characters after the whitespace pass. The PDF extract of the same matrix is 1,394 characters, and it is the shortest document we have. The PDF is still indexed, because a question might be answered from the lines that did survive, and because the assignment includes the <code>pdfs</code> folder. When TF-IDF later compares them, do not expect the PDF row to match the Markdown row at cosine 1. They are not the same string.</p>
+
+    <h2>What cleaning is allowed to do</h2>
+    <p>The files are already well formed. The mess is small and mechanical. Markdown uses two trailing spaces as a hard line break, so several header lines end in <code>"  "</code>. The PDF header separates fields with runs of spaces: <code>Document ID: RGM-2026    Version: 1.4</code>. There are no tabs and no Windows <code>\r\n</code> in this particular download. The cleaner still handles <code>\r\n</code> and <code>\r</code>, because the notebook is supposed to run on Windows too.</p>
+    <p>The function does four things, in order:</p>
+    <ol>
+      <li>Turn any <code>\r\n</code> or <code>\r</code> into <code>\n</code>.</li>
+      <li>On each line, replace runs of spaces and tabs with a single space, then strip the ends.</li>
+      <li>Join the lines back with <code>\n</code>.</li>
+      <li>Collapse three or more newlines into two, and strip the whole string.</li>
+    </ol>
+    <p>It does not delete punctuation, lower-case the text, or remove stopwords. Those choices belong to the analysis cells, where they are visible. Cleaning rewrites <code>page_content</code> in place and does not touch metadata.</p>
+    <p>The check that this was safe: tokenise before and after. Across all ten files the tokens are identical. Only the character length moves, and only by the spaces we removed. The compliance SOP goes from 2,991 raw characters to 2,980. The length cell then reports the collection after this pass: average 4073.2, maximum 5599 (EMEA remote-work policy), minimum 1394 (the PDF).</p>
+
+    <h2>Why length is in characters</h2>
+    <p>The brief says document length, and the chunk size later is specified in characters (800), not tokens. Using <code>len(page_content)</code> makes the length cell and the chunker speak the same unit. A word count would also be a statistic. It would not tell you whether 800 characters is a small slice or almost the whole file. Here every file is longer than 800 characters, so every file will be split. The PDF, at 1,394 characters, becomes about two chunks. The EMEA policy, at 5,599, becomes many.</p>
+    <p>The inspect cell prints metadata, length, and the first 400 characters of <code>docs[0]</code>. That is a smoke test. If the PDF extractor had returned an empty string, or if <code>category</code> were missing, you would see it before any plot or matrix.</p>
+    <p class="note" style="color:#5c564c">Next: <a href="word-frequency.html">stopwords and word frequency</a>.</p>
+  </main>
+</body>
+</html>

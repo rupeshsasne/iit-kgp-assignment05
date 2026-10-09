@@ -19,5 +19,5 @@ Rules for this run:
 - Conclusion prose (section 4 only): first person or impersonal - never "you"/"your".
 - **Do not ask** keep/discard/confirm.
 - Run the filled cell in the notebook on the project `.venv` kernel and save the output in the `.ipynb` before any commit. Replay earlier filled cells in that kernel. Skip the pip cell and later stubs. A side script does not count. Success means the saved output has no traceback and matches the brief. If it fails, fix and re-run. Commit only after a successful notebook run.
-- After that successful run, update `docs/index.html` (status table, a `#built` article `cell-<id>` with the concept and the saved numbers, and `#ahead`). Then commit the notebook and that page, and push `main` to `origin`. Skip the commit when the cell was left unchanged or the run still fails.
+- After that successful run, update `docs/index.html` and the matching note in `docs/topics/` (status, a `#built` article `cell-<id>` with the saved numbers and a link, and a full study page when the topic does not have one yet). Then commit the notebook and those pages, and push `main` to `origin`. Skip the commit when the cell was left unchanged or the run still fails.
 - Reply in 1-3 short lines: what changed (section and cell id), what to re-run, and the commit that was pushed. If the run failed, say the error and that nothing was committed.

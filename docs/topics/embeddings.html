@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Embeddings and MiniLM — Assignment 05</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <p class="kicker"><a href="../index.html">Briefing</a> · study note</p>
+    <h1>Embeddings and MiniLM</h1>
+    <p class="lede">A dense vector in which similar meanings land near each other. This is the representation section 2 searches. TF-IDF is not.</p>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="../index.html">Briefing</a></li>
+      <li><a href="tf-idf.html">TF-IDF</a></li>
+      <li><a href="chunking.html">Chunks</a></li>
+      <li><a href="embeddings.html">Embeddings</a></li>
+      <li><a href="chroma.html">Chroma</a></li>
+      <li><a href="evaluation.html">Evaluation</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h2>Sparse weights versus a learned vector</h2>
+    <p><a href="tf-idf.html">TF-IDF</a> gives each word its own axis. The axis for "remote" is independent of the axis for "home-based". If a question says "working from home" and the policy says "remote work", the dot product on those axes is zero. Cosine cannot invent a synonym. That was acceptable for a map of which whole files share wording. It is a poor search engine for questions phrased by a person who has not memorised the policy's nouns.</p>
+    <p>An embedding model reads the chunk and emits one vector of a fixed length, a few hundred numbers, every one of them usually non-zero. No coordinate is "the word remote". The coordinates are features the model learned so that sentences with similar meaning have a high <a href="cosine-similarity.html">cosine</a>, including paraphrases. The representation is called dense because it is not a sea of zeros.</p>
+    <p>The two spaces must not be mixed. A cosine of 0.88 between TF-IDF rows and a cosine of 0.88 between embedding rows are different measurements. The evaluation note uses embeddings. The similarity cell in section 1.3 uses TF-IDF. Quote them separately.</p>
+
+    <h2>The model we have to load</h2>
+    <p>The brief names <code>sentence-transformers/all-MiniLM-L6-v2</code>. In the notebook that is a <code>HuggingFaceEmbeddings</code> instance with that model id. "MiniLM" is a small Transformer in the BERT family: six layers, a hidden size of 384. "all-" means the sentence-transformers release trained it on a large mix of question-answer and paraphrase pairs, with a contrastive loss that pulls matching sentences together and pushes unrelated ones apart. The "L6" and "v2" are that specific checkpoint. A different MiniLM is a different vector space. Do not substitute a larger model to be helpful. The collection, the query, and the evaluation have to share one space, and the brief picked this one.</p>
+    <p>At encode time the model tokenises the chunk with WordPiece, runs it through the six layers, and mean-pools the token vectors into one 384-dimensional sentence vector. That pooling is inside the sentence-transformers wrapper. We do not write it. We also do not pass <code>device</code>. On a Mac the library may use MPS. On Windows it may use CPU, or CUDA if that PyTorch build has it. The notebook stays free of both branches.</p>
+    <p>The first call downloads the weights, on the order of 80 MB, into the Hugging Face cache. Later calls reuse the cache. The download is not a graded cell. A failure there looks like a network error, not a wrong chunk size.</p>
+
+    <h2>What is being embedded</h2>
+    <p>Section 1.3 embedded nothing. It weighted words. Section 2 embeds <strong>chunks</strong>, the 800-character slices, not the ten raw files. The query is embedded with the same model at question time, and Chroma returns the chunks whose vectors are nearest. If you embedded whole documents instead, you would be back to the dilution problem in the <a href="chunking.html">chunking</a> note.</p>
+    <p>A useful mental test, not a number we have computed yet: the question "how quickly must a critical breach be reported?" should land nearer the chunk that contains "Critical" and "2 hours" than the chunk that contains the document-control footer, even if the question and the footer both contain the word "report". TF-IDF would lean on that shared word. MiniLM was trained to lean on the question-answer relationship. It still fails. Policies full of boilerplate can sit near each other for dull reasons. That is why we retrieve four chunks and show their file names, instead of trusting the top hit blindly.</p>
+
+    <h2>What the cell should not contain</h2>
+    <ul>
+      <li>No <code>device="cuda"</code> and no <code>device="mps"</code>.</li>
+      <li>No second embedding model for the evaluation. Answer similarity and retrieval similarity should use this same MiniLM, so "near" means near in the index we built.</li>
+      <li>No fine-tuning. We load the public checkpoint and encode.</li>
+    </ul>
+    <p class="note" style="color:#5c564c">Next: <a href="chroma.html">Chroma</a>.</p>
+  </main>
+</body>
+</html>

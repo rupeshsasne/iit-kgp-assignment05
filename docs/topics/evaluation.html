@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Evaluation — Assignment 05</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <p class="kicker"><a href="../index.html">Briefing</a> · study note</p>
+    <h1>Evaluation</h1>
+    <p class="lede">Two similarity scores, five questions the files can answer, and one question they cannot. Neither score is an accuracy percentage.</p>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="../index.html">Briefing</a></li>
+      <li><a href="embeddings.html">Embeddings</a></li>
+      <li><a href="cosine-similarity.html">Cosine</a></li>
+      <li><a href="rag-chain.html">Chain</a></li>
+      <li><a href="evaluation.html">Evaluation</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h2>What we are willing to measure</h2>
+    <p>A human could read the generated sentence, open the file, and decide whether it is supported. That is the right audit, and it does not fit a single number the notebook can print. The brief asks for two automatic scores that are honest about what they are: <a href="cosine-similarity.html">cosine similarity</a> in the <a href="embeddings.html">MiniLM</a> space. They do not count matching facts. They ask whether two strings point the same way.</p>
+    <p>Use the same embedding function as the index. A second model would make "0.7" mean something else, and you could no longer compare retrieval quality with answer quality.</p>
+
+    <h2>Answer similarity</h2>
+    <p>Embed the generated answer. Embed the reference answer you wrote from the file. Their cosine is the answer similarity. A high score means the model's sentence and your reference use meaning the embedder considers close. A model can score well by paraphrasing the reference, which is what we want, and it can score well by sharing a lot of generic policy language while missing the number. Read the sentence as well as the score. The score is the record. The sentence is the evidence.</p>
+    <p>The reference has to be a fact that is actually in a loaded document, written short. If you invent a smoother answer than the file contains, you are scoring the model against your prose, not against the corpus.</p>
+
+    <h2>Retrieval similarity</h2>
+    <p>Embed the reference answer. Embed each of the four retrieved chunks. The retrieval similarity is the <strong>maximum</strong> of those four cosines, not the average. One good chunk is a successful retrieval even if the other three are neighbours that came along for the ride. Averaging would punish the system for filling <code>k=4</code>, which the brief requires.</p>
+    <p>This score does not look at the generated answer at all. It asks: did the index surface a passage near the fact we hoped to find? You can have high retrieval similarity and a bad answer, if the chunk was right and the model ignored it. You can have low retrieval similarity and a fluent answer, if the model knew a generic version of the rule and the index missed the file. Those two failure modes are why both numbers exist. The interesting rows in the results table are the ones where the two scores disagree.</p>
+
+    <h2>The five questions</h2>
+    <p>Five pairs, each a question plus a reference answer. Spread them across folders if you can: a breach window from compliance, a threshold from finance, a remote-work rule from HR, a supplier step, an incident step. Five questions from the same section of the same SOP only tests that one file. The questions should be answerable from the text without arithmetic across files, because the chain retrieves four chunks and does not join tables.</p>
+    <p>Then print the average of the five answer similarities and the average of the five retrieval similarities. An average hides the bad row. Also leave the per-question numbers visible so the conclusion can talk about a specific miss.</p>
+
+    <h2>The unsupported question</h2>
+    <p>One more question whose fact is not in these ten files. It should sound like something AeroVelo might have a policy for, so a model is tempted to answer from pretraining. Warehouse door codes, a named customer's contract price, tomorrow's shipment, a city the documents never mention. The pass condition is behavioural: the assistant does not invent the missing fact. The grounded prompt is what makes that likely. The test is whether it worked on this run.</p>
+    <p>Do not score that question against a reference answer you made up. There is no correct sentence in the corpus. Report what it said, and which files it retrieved, if any. A retrieval hit on an unrelated policy plus a refusal is a success. A precise number with no file behind it is a failure.</p>
+
+    <h2>What the conclusion has to use</h2>
+    <p>The conclusion is not a restatement of this page. It has to cite the run: document lengths, chunk count, vector count, the two average scores, one source file that actually came back, and one limit. The limit might be the small model, the lossy PDF, the 372-word tail, or a question where retrieval similarity was high and the answer still dropped the number. The runtime sentence is local Ollama <code>llama3.2:3b</code> at temperature 0 with MiniLM-L6-v2, and no device pinned in the notebook.</p>
+    <p class="note" style="color:#5c564c">Back to the <a href="../index.html#ahead">briefing</a>.</p>
+  </main>
+</body>
+</html>

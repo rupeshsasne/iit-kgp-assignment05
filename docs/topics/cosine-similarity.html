@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cosine similarity — Assignment 05</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <p class="kicker"><a href="../index.html">Briefing</a> · study note</p>
+    <h1>Cosine similarity</h1>
+    <p class="lede">The angle between two vectors. In this notebook it is how we compare TF-IDF rows, and later how we compare embeddings.</p>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="../index.html">Briefing</a></li>
+      <li><a href="tf-idf.html">TF-IDF</a></li>
+      <li><a href="cosine-similarity.html">Cosine</a></li>
+      <li><a href="embeddings.html">Embeddings</a></li>
+      <li><a href="evaluation.html">Evaluation</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h2>A vector is a direction</h2>
+    <p>Once <a href="tf-idf.html">TF-IDF</a> has run, each AeroVelo file is a list of weights, one weight per vocabulary word. You can draw that list as an arrow in a high-dimensional space. The arrow's direction says which words carry the weight. The arrow's length says how large those weights are in total.</p>
+    <p>We care about the direction. Two policies about remote work should point the same way even if one file is twice as long. Cosine similarity measures that and ignores length. If you have used correlation, the geometry is the same family of idea: centre the comparison on shape, not on magnitude. Cosine does not subtract the mean the way Pearson correlation does. It uses the raw angle from the origin.</p>
+
+    <h2>The formula</h2>
+    <p>For vectors <em>a</em> and <em>b</em>:</p>
+    <p class="formula">cosine(a, b) = (a · b) / (|a| |b|)</p>
+    <p>The numerator is the dot product: multiply matching coordinates and add them up. Words that are zero in either file contribute nothing. The denominator is the product of the Euclidean lengths, which cancels the effect of one arrow being longer. The result is the cosine of the angle between the arrows.</p>
+    <table>
+      <thead><tr><th>Cosine</th><th>Angle</th><th>In this assignment</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>0 degrees</td><td>Same mix of weights. Every file with itself. Also two files whose weighted vocabularies match.</td></tr>
+        <tr><td>0</td><td>90 degrees</td><td>No shared non-zero words. A bill of materials against a text that never uses those part names.</td></tr>
+        <tr><td>between</td><td>acute</td><td>Partial overlap. Most of our 10 by 10 matrix lives here.</td></tr>
+      </tbody>
+    </table>
+    <p>TF-IDF weights are non-negative, so our cosines are between 0 and 1. Embeddings from MiniLM can have negative coordinates, and a cosine can in principle be negative. A negative embedding cosine means the vectors point into opposing halves of the space. You will not see that on the TF-IDF matrix.</p>
+
+    <h2>Why the notebook's TF-IDF rows make this a dot product</h2>
+    <p><code>TfidfVectorizer</code> L2-normalises each row. After that, <code>|a| = 1</code> and <code>|b| = 1</code>, so the denominator is 1 and cosine equals the dot product. <code>cosine_similarity</code> still divides by the lengths. On these rows the division changes nothing. It matters later, when embedding vectors are not guaranteed to be unit length, and it matters if someone turns <code>norm</code> off.</p>
+    <p>Using the toy documents from the TF-IDF note, the normalised rows for the two "remote work" lines have cosine 0.5989. The battery line shares no coordinates with them, so the dot product is 0. That is the same function call as <code>cosine_similarity(X)</code> in the notebook. On the real files the nearest pair is the EMEA and US remote-work policies at 0.884. Their arrows are close. They are not the same arrow: 0.884 leaves room for the US-only and EMEA-only clauses.</p>
+
+    <h2>How to read <code>sim_df</code></h2>
+    <p>The matrix is symmetric. Row "US policy", column "EMEA policy" equals the transpose. The diagonal is 1.000 because the angle of a vector with itself is zero, and because each normalised vector's dot product with itself is 1. Ranking pairs without removing the diagonal would put ten perfect matches at the top and teach you nothing.</p>
+    <p>The cell builds <code>pairs</code> with <code>i &lt; j</code>, so each unordered pair of different files appears once. Sorting descending makes <code>pairs[0]</code> the closest pair. Rounding to three decimals is display only. A difference of 0.001 is not a finding.</p>
+    <p>Read a high score as "these two whole documents share distinctive wording." Read a low score as "they share little of the weighted vocabulary." Do not read either score as a percentage of facts in common. Boilerplate that survived the stopword list, such as repeated organisational phrases, can inflate a score. A paraphrase with no shared content words can deflate it.</p>
+
+    <h2>The same geometry, a different space</h2>
+    <p>Section 2 and the evaluation will call cosine again, on MiniLM vectors rather than TF-IDF rows. The formula does not change. The meaning of a coordinate does. In TF-IDF, coordinate 400 might be the weight of the word "remote". In MiniLM, coordinate 400 is not a word. It is one axis the model learned. A cosine of 0.8 in one space is not "the same closeness" as 0.8 in the other. When the write-up quotes 0.884, name the space: TF-IDF cosine between whole documents.</p>
+    <p class="note" style="color:#5c564c">Related: <a href="tf-idf.html">TF-IDF</a>, <a href="embeddings.html">embeddings</a>, <a href="evaluation.html">evaluation</a>.</p>
+  </main>
+</body>
+</html>

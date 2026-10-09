@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stopwords and word frequency — Assignment 05</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <p class="kicker"><a href="../index.html">Briefing</a> · study note</p>
+    <h1>Stopwords and word frequency</h1>
+    <p class="lede">What the folder is about, once the function words are gone. This is description, not the search index.</p>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="../index.html">Briefing</a></li>
+      <li><a href="documents.html">Documents</a></li>
+      <li><a href="word-frequency.html">Words</a></li>
+      <li><a href="tf-idf.html">TF-IDF</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h2>Why the raw count is mostly "the"</h2>
+    <p>English text obeys a steep curve: a handful of function words account for a large share of tokens, and a long tail of words appear once. If you count every token in these policies, the winners are "the", "of", "and", "to". That tells you the files are in English. It does not tell you they are about regional operations, remote work, and incidents.</p>
+    <p>A stopword list is a fixed set of those function words. Removing them is a blunt instrument. "Will" as a verb and "will" as a person's name collide. For this folder the collision does not matter. We want the content words.</p>
+    <p>The cell uses NLTK's English list, about 198 words, loaded from the <code>stopwords</code> corpus. That download is a one-time setup step. The list includes "a", "an", "the", "of", "and", "to", "in", and also words you might hesitate over, such as "not" and "no". Dropping "not" can hide a prohibition ("not permitted"). For a frequency portrait of the corpus, that loss is acceptable. For the assistant's answers later, we do not drop stopwords. The model sees the original cleaned sentences, negation included.</p>
+
+    <h2>What counts as a word here</h2>
+    <p>The pattern <code>[A-Za-z]+</code> keeps alphabetic runs and throws away digits, hyphens, and punctuation. "SOP-COM-015" contributes "SOP", "COM". The number is gone. Everything is lower-cased before the stopword check, so "Regional" and "regional" add up. Tokens of length 1 are dropped. "A" is already a stopword. A stray "x" from a broken extract is not worth a rank.</p>
+    <p>This tokeniser is not the one <a href="tf-idf.html">TF-IDF</a> uses. scikit-learn keeps tokens of two or more word characters, which includes digits, and it applies its own English stop list. The top of the frequency table and the top TF-IDF features will rhyme. They will not be identical, and they do not need to be. Section 1.3.2 is a histogram. Section 1.3.3 is a geometry.</p>
+
+    <h2>How to read our table</h2>
+    <p>After the filter, the head of the counter is:</p>
+    <table>
+      <thead><tr><th>Word</th><th>Count</th><th>Why it is high</th></tr></thead>
+      <tbody>
+        <tr><td>regional</td><td>67</td><td>The governance matrix and several policies are organised by region.</td></tr>
+        <tr><td>avl</td><td>55</td><td>The company's own short name, repeated in headers and body.</td></tr>
+        <tr><td>remote</td><td>54</td><td>Two long HR policies are about remote work. They are also the longest files.</td></tr>
+        <tr><td>document</td><td>46</td><td>Policies talk about themselves: document id, document owner.</td></tr>
+        <tr><td>operations</td><td>40</td><td>The incident SOP and the operating language of the other files.</td></tr>
+      </tbody>
+    </table>
+    <p>"Remote" is high partly because those two HR files are long, and this cell uses raw counts. Length bias is exactly what TF-IDF is about to correct. Do not treat rank 3 as "the corpus is mostly a remote-work manual." Two files out of ten are. They contain a lot of words.</p>
+
+    <h2>The least frequent words are a tie</h2>
+    <p>The minimum count is 1. 372 distinct words appear once. There is no single "least frequent word" to name. The cell sorts that tie alphabetically and shows the first 15, plus the size of the tie, so the output states the fact instead of pretending one hapax is special.</p>
+    <p>A word that appears once is a weak feature for TF-IDF as well: its term frequency cannot be large, and if it appears in only one document its idf is high, so it still gets a non-trivial weight in that one file. The frequency cell and the TF-IDF cell are looking at the same tail from two sides. The frequency cell says the tail is long. TF-IDF says a rare word can still mark the file it belongs to.</p>
+    <p class="note" style="color:#5c564c">Next: <a href="tf-idf.html">TF-IDF</a>.</p>
+  </main>
+</body>
+</html>

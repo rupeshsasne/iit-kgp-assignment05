@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What RAG is — Assignment 05</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <p class="kicker"><a href="../index.html">Briefing</a> · study note</p>
+    <h1>What RAG is</h1>
+    <p class="lede">Retrieval-augmented generation: find the passages first, then let the language model write from those passages only.</p>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="../index.html">Briefing</a></li>
+      <li><a href="rag.html">RAG</a></li>
+      <li><a href="documents.html">Documents</a></li>
+      <li><a href="embeddings.html">Embeddings</a></li>
+      <li><a href="rag-chain.html">Chain</a></li>
+      <li><a href="evaluation.html">Evaluation</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h2>Two ways to answer, both wrong on their own</h2>
+    <p>Ask Llama 3.2, with no documents, "what is AeroVelo's reporting window for a critical regulatory breach?" The model will produce a confident sentence. It has seen many policies in training. It has not seen SOP-COM-015. The number it prints might be two hours, or twenty-four, or something that sounds procedural and is not in the file. That failure is usually called hallucination. For this assignment the precise problem is narrower: the answer is not grounded in the folder we were given.</p>
+    <p>The other extreme is search without a model. Ctrl-F for "critical" inside one Markdown file works when you already know the file. It fails when the fact might be in any of ten files, when the question says "how fast must we escalate a criminal-liability incident" and the file says "Critical | 2 hours", and when the user wanted a sentence rather than a highlighted line. Keyword search also fails across the PDF extract, because the words on the page and the words in the question drift apart.</p>
+    <p>RAG is the combination. A retrieval step picks a few passages from the approved folder. A generation step writes the answer using those passages as the only allowed source. The notebook has to show which files the passages came from, so a person can open them.</p>
+
+    <h2>The pieces, in the order we build them</h2>
+    <ol>
+      <li><strong>Corpus.</strong> Ten files under <code>AeroVelo Logistics Global</code>. See <a href="documents.html">documents</a>.</li>
+      <li><strong>Analysis, not retrieval yet.</strong> Lengths, word counts, and a TF-IDF cosine matrix tell us what the folder contains. They are graded, and they are not the index the assistant queries.</li>
+      <li><strong>Chunks.</strong> Whole policies are too big to hand to a model as "the" context for one question. We cut them. See <a href="chunking.html">chunking</a>.</li>
+      <li><strong>Vectors.</strong> Each chunk becomes a MiniLM embedding so "escalate a breach" can land near "reporting window" without sharing those strings. See <a href="embeddings.html">embeddings</a>.</li>
+      <li><strong>Index.</strong> Chroma stores the vectors under the name <code>logistics_rag</code>. See <a href="chroma.html">Chroma</a>.</li>
+      <li><strong>Chain.</strong> For a question, take the 4 nearest chunks, put them in a prompt that forbids outside knowledge, call <code>llama3.2:3b</code> at temperature 0, and print the source file names. See <a href="rag-chain.html">the RAG chain</a>.</li>
+      <li><strong>Check.</strong> Five questions we can answer from the files, two similarity scores, and one question the files cannot answer. See <a href="evaluation.html">evaluation</a>.</li>
+    </ol>
+
+    <h2>What "grounded" has to mean here</h2>
+    <p>A grounded answer is one a reader can trace to a retrieved passage. It is not an answer that happens to be true in the wider world. If the retrieved chunks do not contain the fact, the honest output is that the folder does not say. Inventing a plausible AeroVelo rule is a failure even when the prose is fluent.</p>
+    <p>The brief also says the notebook does not connect to live logistics systems. There is no database of shipments to query. The only knowledge base is the files in the dataset folder.</p>
+    <p>Temperature 0 and a small local model will still paraphrase. Evaluation therefore does not demand the reference sentence character for character. It measures whether the retrieved text was about the right thing, and whether the written answer sits near the reference in embedding space. Those scores are explained in the evaluation note. They are not a certificate that every clause is supported.</p>
+
+    <h2>What we are deliberately not doing</h2>
+    <ul>
+      <li>No fine-tuning. The model stays <code>llama3.2:3b</code> as Ollama ships it.</li>
+      <li>No second vector space. TF-IDF is for the analysis section. Search uses MiniLM.</li>
+      <li>No device pin. The same notebook runs on a Mac and on a Windows machine.</li>
+      <li>No API key in the notebook. Gemini is an optional path in the brief. This project uses Ollama.</li>
+    </ul>
+    <p class="note" style="color:#5c564c">Next: <a href="documents.html">documents, PDF text, and cleaning</a>.</p>
+  </main>
+</body>
+</html>

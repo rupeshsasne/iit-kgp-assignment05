@@ -89,12 +89,19 @@ Total: 100 marks. Libraries cell is setup (0 marks) - leave the pip comments com
    outputs does not count. Success means the saved output has no traceback and
    matches the brief. On failure, fix the cell and run it again. Do not commit
    a failing cell.
-5. After that successful notebook run, update `docs/index.html` before the commit.
-   Mark the section done in the status table. Add or replace an article under
-   `#built` with `id="cell-<cell id>"`: the concept in plain language, what the
-   cell did, and the numbers from the saved output. Move that item out of
-   `#ahead`. Do not paste the whole cell. A short snippet is enough. If the run
-   failed, leave the page unchanged.
+5. After that successful notebook run, update the study site before the commit.
+   On `docs/index.html`: mark the section done in the status table, add or
+   replace an article under `#built` with `id="cell-<cell id>"` (what the cell
+   did, the numbers from the saved output, and a link to the study note), and
+   move that item out of `#ahead`. Do not paste the whole cell.
+   Study notes live in `docs/topics/` and are linked from `#topics`. If this
+   cell's idea already has a page, add a short "What the notebook showed"
+   section with the new numbers. If the idea has no page yet, add one in the
+   same depth as `docs/topics/tf-idf.html` (a full note: why it exists, the
+   formula or mechanism the notebook uses, a worked example, how to read our
+   output, and what it cannot do) and link it from `#topics` and the cell
+   article. Do not collapse a study note back into a paragraph on the index.
+   If the run failed, leave the site unchanged.
 6. Ollama must already be serving `llama3.2:3b` before any generation cell.
    If it is missing, the run failed: do not commit, and say so. Do not switch models.
 
@@ -201,7 +208,7 @@ one `chunks` list, one `vectordb`, one `rag_chain`).
 1. Read the target cell and the brief above it.
 2. Fill that cell only (hint comment kept).
 3. Make it work, then commit. Execute the filled cell in the notebook with the project `.venv` kernel (`nbclient` or Jupyter) so its output is stored in the `.ipynb`. Replay earlier filled code cells in that kernel. Skip the pip-install cell and later stubs. A separate Python script is not enough. Validate the saved output: no traceback, and it matches the brief. If it fails, fix and re-run. Do not commit until that notebook run succeeds.
-4. After a successful run, update `docs/index.html` as in Invocation step 5, then commit and push. Stage the notebook, `docs/index.html`, and this skill if it changed in the same run. Leave `.venv`, caches, and secrets unstaged. One commit, message in the repo style: one sentence on why the block changed. Then `git push` `main` to `origin`. Do not change git config, do not force-push, do not amend. If HTTPS cannot prompt for a username, push with `git -c url.git@github.com:.insteadOf=https://github.com/ push origin main` and leave the remote URL as HTTPS. Skip the commit when the cell was left unchanged or the run still fails.
+4. After a successful run, update `docs/index.html` and any `docs/topics/` page as in Invocation step 5, then commit and push. Stage the notebook, the docs pages that changed, and this skill if it changed in the same run. Leave `.venv`, caches, and secrets unstaged. One commit, message in the repo style: one sentence on why the block changed. Then `git push` `main` to `origin`. Do not change git config, do not force-push, do not amend. If HTTPS cannot prompt for a username, push with `git -c url.git@github.com:.insteadOf=https://github.com/ push origin main` and leave the remote URL as HTTPS. Skip the commit when the cell was left unchanged or the run still fails.
 5. Reply in 1-3 short lines: what you filled (section + cell id), what to re-run, and the commit that was pushed. If the run failed, say the error and that nothing was committed.
 
 ## Style detail

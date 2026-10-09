@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chunking and overlap — Assignment 05</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <p class="kicker"><a href="../index.html">Briefing</a> · study note</p>
+    <h1>Chunking and overlap</h1>
+    <p class="lede">Why a 5,000-character policy has to be cut before it is retrieved, and what 800 and 120 actually do. This cell is not written yet.</p>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="../index.html">Briefing</a></li>
+      <li><a href="documents.html">Documents</a></li>
+      <li><a href="chunking.html">Chunks</a></li>
+      <li><a href="embeddings.html">Embeddings</a></li>
+      <li><a href="chroma.html">Chroma</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h2>Whole documents are the wrong unit for a question</h2>
+    <p>The length cell already measured the folder. The shortest text is 1,394 characters. The longest is 5,599. A question such as "what is the reporting window for a critical breach?" needs one row of one table inside the compliance SOP, not the purpose statement, the appendix, and the version history. If we embedded each file as a single vector, that vector would be an average of every topic in the file. The breach-window sentence would be diluted by the rest of the SOP, and the model would be handed thousands of characters of context for a one-line fact.</p>
+    <p>Chunking cuts <code>page_content</code> into pieces small enough that one piece can be "about" one rule. The brief fixes the knife: <strong>800 characters</strong>, with an <strong>overlap of 120 characters</strong>. Those numbers are not a suggestion. The notebook is graded against them.</p>
+
+    <h2>Characters, not tokens</h2>
+    <p>800 characters is roughly 120 to 160 English words, depending on the policy's table formatting. It is not 800 tokens. A token for Llama is often a short piece of a word, and MiniLM has its own tokeniser with a maximum length. We still cut on characters because that is the unit in the brief and the unit <code>RecursiveCharacterTextSplitter</code> uses when you pass <code>chunk_size</code> without a custom length function. The embedding model will tokenise each chunk again later. If a chunk's token count exceeds MiniLM's window, the model truncates. At 800 characters that is unlikely for this corpus. We do not retune the size to chase the model's window.</p>
+
+    <h2>What "recursive" splits on</h2>
+    <p>The splitter tries to break on paragraph boundaries first, then newlines, then spaces, and only then on raw characters. The order matters. A cut on a blank line keeps a section together. A cut in the middle of a word is the last resort, used only when a single line is itself longer than 800 characters, which a markdown table row might be.</p>
+    <p>Overlap means the next chunk starts 120 characters before the previous chunk ended. Take a toy line, with chunk size 20 and overlap 5, so the arithmetic fits on a page:</p>
+    <pre>abcdefghijklmnopqrstuvwxyz</pre>
+    <p>The first piece is <code>abcdefghijklmnopqrst</code> (20 characters). The next piece starts at index <code>20 - 5 = 15</code>, so it begins with <code>pqrst</code> and continues. The shared <code>pqrst</code> is the overlap. If a sentence had ended at the boundary, both chunks would still contain its tail or its head. Without overlap, a fact that straddles the cut is in neither chunk intact, and retrieval can miss it.</p>
+    <p>On our settings the step is <code>800 - 120 = 680</code> characters of new text per chunk, with 120 repeated. The EMEA policy at 5,599 characters therefore becomes more than one chunk. The PDF at 1,394 becomes about two. The exact count depends on where the separators fall, so the notebook should print <code>len(chunks)</code> rather than a hand estimate.</p>
+
+    <h2>Metadata has to be copied</h2>
+    <p>Each chunk is its own <code>Document</code>. Its <code>page_content</code> is the slice. Its <code>metadata</code> must still carry <code>file_name</code>, <code>category</code>, <code>file_type</code>, and <code>source</code> from the parent. <code>RecursiveCharacterTextSplitter.split_documents</code> does that copy if you pass the document list. Building chunks from bare strings and forgetting the dictionary is the failure mode that makes every answer unsourced.</p>
+    <p>The splitter may also add its own keys, such as a start index, if you ask it to. We do not need extra keys for the grade. We do need the four we already stored.</p>
+
+    <h2>What to look at when the cell exists</h2>
+    <ul>
+      <li>The chunk count is greater than 10, because every file is longer than 800 characters.</li>
+      <li>A sample chunk's text is a readable slice of a policy, not a single word and not an entire file.</li>
+      <li>That sample's metadata still names the file it came from.</li>
+      <li>Neighbouring chunks from the same file share a run of characters about 120 long.</li>
+    </ul>
+    <p class="note" style="color:#5c564c">Next, once chunks exist: <a href="embeddings.html">embeddings and MiniLM</a>.</p>
+  </main>
+</body>
+</html>
