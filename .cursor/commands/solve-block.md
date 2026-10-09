@@ -18,5 +18,6 @@ Rules for this run:
 - **Keyboard characters only** in anything you write into the notebook. No emoji, smart quotes, em/en dashes, or arrows.
 - Conclusion prose (section 4 only): first person or impersonal - never "you"/"your".
 - **Do not ask** keep/discard/confirm.
-- After the block is filled, commit the notebook and push `main` to `origin`. Skip the commit only when the cell was left unchanged.
-- Reply in 1-3 short lines: what changed (section and cell id), what to re-run, and the commit that was pushed.
+- Run the filled cell in the notebook on the project `.venv` kernel and save the output in the `.ipynb` before any commit. Replay earlier filled cells in that kernel. Skip the pip cell and later stubs. A side script does not count. Success means the saved output has no traceback and matches the brief. If it fails, fix and re-run. Commit only after a successful notebook run.
+- After that successful run, commit the notebook and push `main` to `origin`. Skip the commit when the cell was left unchanged or the run still fails.
+- Reply in 1-3 short lines: what changed (section and cell id), what to re-run, and the commit that was pushed. If the run failed, say the error and that nothing was committed.

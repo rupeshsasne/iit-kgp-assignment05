@@ -82,11 +82,15 @@ Total: 100 marks. Libraries cell is setup (0 marks) - leave the pip comments com
 1. Read the focused cell and the markdown brief directly above it.
 2. Reuse names and objects already created in earlier cells. Do not rewrite them.
 3. Fill **only** that block. Leave other stub cells alone.
-4. Execute the filled cell when it is cheap (load, clean, stats, chunk inspect).
-   Do not rebuild the Chroma index or call Ollama unless this block needs it
-   or the user asked to run it.
+4. Run and validate the filled cell inside the notebook before any commit, using
+   the project `.venv` kernel so the cell output is saved in the `.ipynb`.
+   Replay earlier filled code cells in that same kernel. Skip the pip-install cell
+   and do not execute later stubs. A side script that never writes notebook
+   outputs does not count. Success means the saved output has no traceback and
+   matches the brief. On failure, fix the cell and run it again. Do not commit
+   a failing cell.
 5. Ollama must already be serving `llama3.2:3b` before any generation cell.
-   If it is missing, say so in the short reply. Do not switch models.
+   If it is missing, the run failed: do not commit, and say so. Do not switch models.
 
 ## No confirmation prompts
 
@@ -190,9 +194,9 @@ one `chunks` list, one `vectordb`, one `rag_chain`).
 
 1. Read the target cell and the brief above it.
 2. Fill that cell only (hint comment kept).
-3. Run it on the project `.venv` when the cell is cheap and its inputs already exist.
-4. Commit and push that block before the reply. Stage only the notebook (and this skill if it changed in the same run). Leave `.venv`, caches, and secrets unstaged. One commit, message in the repo style: one sentence on why the block changed. Then `git push` `main` to `origin`. Do not change git config, do not force-push, do not amend. If HTTPS cannot prompt for a username, push with `git -c url.git@github.com:.insteadOf=https://github.com/ push origin main` and leave the remote URL as HTTPS. If the block was left unchanged, skip the commit.
-5. Reply in 1-3 short lines: what you filled (section + cell id), what to re-run, and the commit that was pushed.
+3. Make it work, then commit. Execute the filled cell in the notebook with the project `.venv` kernel (`nbclient` or Jupyter) so its output is stored in the `.ipynb`. Replay earlier filled code cells in that kernel. Skip the pip-install cell and later stubs. A separate Python script is not enough. Validate the saved output: no traceback, and it matches the brief. If it fails, fix and re-run. Do not commit until that notebook run succeeds.
+4. After a successful run, commit and push. Stage only the notebook (and this skill if it changed in the same run). Leave `.venv`, caches, and secrets unstaged. One commit, message in the repo style: one sentence on why the block changed. Then `git push` `main` to `origin`. Do not change git config, do not force-push, do not amend. If HTTPS cannot prompt for a username, push with `git -c url.git@github.com:.insteadOf=https://github.com/ push origin main` and leave the remote URL as HTTPS. Skip the commit when the cell was left unchanged or the run still fails.
+5. Reply in 1-3 short lines: what you filled (section + cell id), what to re-run, and the commit that was pushed. If the run failed, say the error and that nothing was committed.
 
 ## Style detail
 
