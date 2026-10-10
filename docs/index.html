@@ -53,7 +53,7 @@
         <tr><td>3.1.2 Run answer and retrieval similarity</td><td><span class="tag done">done</span></td></tr>
         <tr><td>3.1.3 Average similarities</td><td rowspan="2">6</td><td><span class="tag done">done</span></td></tr>
         <tr><td>3.1.3 One unsupported question</td><td><span class="tag done">done</span></td></tr>
-        <tr><td>4.1.1 Conclusion</td><td>5</td><td><span class="tag todo">next</span></td></tr>
+        <tr><td>4.1.1 Conclusion</td><td>5</td><td><span class="tag done">done</span></td></tr>
       </tbody>
     </table>
 
@@ -264,12 +264,13 @@
       <p>Cell <code>00298891</code> asks for the door access code of the Frankfurt hub warehouse. That code is not in the ten files. The saved answer says the context has no such information. Retrieved files were <code>RGM-2026_Regional_Governance_Matrix.pdf</code>, <code>AVL-PUR-012_Supplier_Qualification.md</code>, and <code>RGM-2026_Regional_Governance_Matrix.md</code>. No code was invented. This question is not scored. Study note: <a href="topics/evaluation.html">Evaluation</a>.</p>
     </article>
 
+    <article class="cell" id="cell-1049381c">
+      <h3>4.1.1 Conclusion <span class="tag done">done</span></h3>
+      <p>Cell <code>1049381c</code> is the write-up. It cites 10 files, lengths 1394 to 5599 (average 4073.2), 68 chunks, 68 vectors, mean answer similarity 0.4486, and mean retrieval similarity 0.2788. The limit it names is the 3B model refusing a fact that was in a retrieved chunk. Runtime stated there is local Ollama <code>llama3.2:3b</code> at temperature 0 with MiniLM-L6-v2, and no device pin. Study note: <a href="topics/evaluation.html">Evaluation</a>.</p>
+    </article>
+
     <h2 id="ahead">Still to build</h2>
-    <p>Read the matching study note before each stub. The notebook stubs, in order:</p>
-    <ol>
-      <li>Write the conclusion from this run's numbers, one limit, and the runtime assumption.</li>
-    </ol>
-    <p>When a stub is filled, this page gains a section under "What the solved cells did" and the status table moves that row to done.</p>
+    <p>The notebook stubs are filled.</p>
   </main>
 </body>
 </html>
