@@ -36,7 +36,16 @@
 
     <h2>What the notebook showed</h2>
     <p>Cell <code>92aa2699</code> builds <code>eval_set</code> and prints its length. The saved output is 5. Each item has a <code>question</code> and an <code>answer</code>. The references, taken from the files, are: 2 hours from discovery for a Critical breach (SOP-COM-015), Hub Operations Manager for emergency procurement up to $5,000, $350 per month for a full-remote US worker, 90 days from the first order for a provisional supplier, and 24 hours from the initial notification to log an incident in the Global Incident Registry.</p>
-    <p>Cell <code>bb34a006</code> defines <code>evaluate</code>. The saved output is the name <code>evaluate</code>. Answer similarity is the MiniLM cosine between the generated sentence and the reference. Retrieval similarity is the maximum MiniLM cosine between the reference and the four retrieved chunk texts. Both use the <code>embeddings</code> object from the index, not a second model. The function is not called in this cell, so there are no scores yet.</p>
+    <p>Cell <code>bb34a006</code> defines <code>evaluate</code>. The saved output is the name <code>evaluate</code>. Answer similarity is the MiniLM cosine between the generated sentence and the reference. Retrieval similarity is the maximum MiniLM cosine between the reference and the four retrieved chunk texts. Both use the <code>embeddings</code> object from the index, not a second model.</p>
+    <p>Cell <code>7de6764e</code> runs it on the five pairs and prints each row. The saved scores, answer similarity then retrieval similarity, are:</p>
+    <ul>
+      <li>Critical breach window: 0.6214, 0.1979. The model said "Two hours." Sources include <code>SOP-COM-015_Regulatory_Breach_Report.md</code>.</li>
+      <li>Emergency procurement up to $5,000: 0.0615, 0.2197. The model said the context did not contain the fact. <code>FIN-AUTH-101_Authorization_Framework.md</code> was still retrieved.</li>
+      <li>Full-remote US stipend: 0.9460, 0.3474. The model said "$350." Source <code>HR-POL-030_Remote_Work_US.md</code>.</li>
+      <li>Provisional supplier qualification: 0.5921, 0.3498. The model said 90 days of the first order. Source <code>AVL-PUR-012_Supplier_Qualification.md</code>.</li>
+      <li>Global Incident Registry: 0.0220, 0.2791. The model said the context did not contain the fact. <code>OP-204_Incident_Management_v4.md</code> was still retrieved.</li>
+    </ul>
+    <p>None of these numbers is an accuracy percentage. The cell does not print the averages.</p>
 
     <h2>The five questions</h2>
     <p>Five pairs, each a question plus a reference answer. Spread them across folders if you can: a breach window from compliance, a threshold from finance, a remote-work rule from HR, a supplier step, an incident step. Five questions from the same section of the same SOP only tests that one file. The questions should be answerable from the text without arithmetic across files, because the chain retrieves four chunks and does not join tables.</p>
