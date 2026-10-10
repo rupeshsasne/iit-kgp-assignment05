@@ -45,8 +45,8 @@
         <tr><td>2.2.1 Chain pieces already imported</td><td rowspan="4">12</td><td><span class="tag done">done</span></td></tr>
         <tr><td>2.2.1 Format retrieved context</td><td><span class="tag done">done</span></td></tr>
         <tr><td>2.2.1 Create the RAG chain</td><td><span class="tag done">done</span></td></tr>
-        <tr><td>2.2.1 Initialise the chain</td><td><span class="tag todo">next</span></td></tr>
-        <tr><td>2.2.2 Answer plus source file names</td><td>7</td><td><span class="tag todo">later</span></td></tr>
+        <tr><td>2.2.1 Initialise the chain</td><td><span class="tag done">done</span></td></tr>
+        <tr><td>2.2.2 Answer plus source file names</td><td>7</td><td><span class="tag todo">next</span></td></tr>
         <tr><td>3.1.1 Five question / answer pairs</td><td>4</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>3.1.2 Answer and retrieval similarity</td><td>10</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>3.1.3 Averages and one unsupported question</td><td>6</td><td><span class="tag todo">later</span></td></tr>
@@ -218,13 +218,18 @@
 
     <article class="cell" id="cell-cbfa3921">
       <h3>2.2.1 Create the RAG chain <span class="tag done">done</span></h3>
-      <p>Cell <code>cbfa3921</code> defines <code>create_rag_chain</code>. The retriever asks for 4 chunks, <code>format_docs</code> builds the context, and the prompt says to answer only from that context. The model is <code>llama3.2:3b</code> through Ollama at temperature 0. The saved output is <code>(4, 'llama3.2:3b')</code>. The chain is not started in this cell. Study note: <a href="topics/rag-chain.html">The RAG chain</a>.</p>
+      <p>Cell <code>cbfa3921</code> defines <code>create_rag_chain</code>. The retriever asks for 4 chunks, <code>format_docs</code> builds the context, and the prompt says to answer only from that context. The model is <code>llama3.2:3b</code> through Ollama at temperature 0. The saved output is <code>(4, 'llama3.2:3b')</code>. Study note: <a href="topics/rag-chain.html">The RAG chain</a>.</p>
+    </article>
+
+    <article class="cell" id="cell-305a1d7e">
+      <h3>2.2.1 Initialise the chain <span class="tag done">done</span></h3>
+      <p>Cell <code>305a1d7e</code> sets <code>rag_chain = create_rag_chain(vectordb)</code>. The saved output is <code>RunnableSequence</code>. No question is sent in this cell, so Ollama is not asked to generate yet. Study note: <a href="topics/rag-chain.html">The RAG chain</a>.</p>
     </article>
 
     <h2 id="ahead">Still to build</h2>
     <p>Read the matching study note before each stub. The notebook stubs, in order:</p>
     <ol>
-      <li>Start the chain with <code>create_rag_chain(vectordb)</code>. Ollama must already be serving <code>llama3.2:3b</code>.</li>
+      <li>Answer one logistics question with <code>rag_chain</code> and print the source file names. Ollama must already be serving <code>llama3.2:3b</code>.</li>
       <li>Answer one logistics question and print the source file names.</li>
       <li>Write five questions whose answers are in the files, score answer similarity and retrieval similarity, print the averages, and ask one question the files cannot answer.</li>
       <li>Write the conclusion from this run's numbers, one limit, and the runtime assumption.</li>
