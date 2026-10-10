@@ -35,7 +35,8 @@
 
     <h2>What the notebook showed</h2>
     <p>Cell <code>4dd0c4dd</code> defines <code>add_chunks</code>. The saved output is <code>('logistics_rag', 'chroma_db')</code>: collection name, then the persist directory. The function calls <code>Chroma.from_documents</code> with the MiniLM object from cell <code>e56aa4bd</code>.</p>
-    <p>Cell <code>5c208fb9</code> deletes <code>chroma_db</code> if it is already there, then sets <code>vectordb = add_chunks(chunks)</code>. The saved output is the collection name, <code>logistics_rag</code>. The delete matters: <code>from_documents</code> appends, so a second run without it would store 136 vectors. After this run the collection holds 68 vectors, matching <code>len(chunks)</code>. The count cell has not printed that number yet.</p>
+    <p>Cell <code>5c208fb9</code> deletes <code>chroma_db</code> if it is already there, then sets <code>vectordb = add_chunks(chunks)</code>. The saved output is the collection name, <code>logistics_rag</code>. The delete matters: <code>from_documents</code> appends, so a second run without it would store 136 vectors.</p>
+    <p>Cell <code>e87a17ad</code> prints <code>vectordb._collection.count()</code>. The saved output is 68, equal to <code>len(chunks)</code>. That is the check that every chunk was stored once.</p>
 
     <h2>Querying</h2>
     <p>A retriever with <code>k=4</code> embeds the question with the same <code>HuggingFaceEmbeddings</code> object, asks the collection for four neighbours, and returns four <code>Document</code>s. Four is the brief. <code>k=3</code> or <code>k=5</code> changes the context the model sees and the retrieval-similarity score. Leave it at 4.</p>

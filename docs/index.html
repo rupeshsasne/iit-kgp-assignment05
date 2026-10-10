@@ -41,8 +41,8 @@
         <tr><td>2.1.1 MiniLM embeddings</td><td>5</td><td><span class="tag done">done</span></td></tr>
         <tr><td>2.1.2 Define <code>add_chunks</code> (<code>logistics_rag</code>)</td><td rowspan="3">11</td><td><span class="tag done">done</span></td></tr>
         <tr><td>2.1.2 Populate the collection</td><td><span class="tag done">done</span></td></tr>
-        <tr><td>2.1.2 Vector count</td><td><span class="tag todo">next</span></td></tr>
-        <tr><td>2.2.1 RAG chain, k=4, temperature 0</td><td>12</td><td><span class="tag todo">later</span></td></tr>
+        <tr><td>2.1.2 Vector count</td><td><span class="tag done">done</span></td></tr>
+        <tr><td>2.2.1 RAG chain, k=4, temperature 0</td><td>12</td><td><span class="tag todo">next</span></td></tr>
         <tr><td>2.2.2 Answer plus source file names</td><td>7</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>3.1.1 Five question / answer pairs</td><td>4</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>3.1.2 Answer and retrieval similarity</td><td>10</td><td><span class="tag todo">later</span></td></tr>
@@ -195,13 +195,17 @@
 
     <article class="cell" id="cell-5c208fb9">
       <h3>2.1.2 Populate the collection <span class="tag done">done</span></h3>
-      <p>Cell <code>5c208fb9</code> clears <code>chroma_db</code> and sets <code>vectordb = add_chunks(chunks)</code>. Clearing first keeps a second run from appending another 68 vectors. The saved output is <code>logistics_rag</code>. The store on disk holds 68 vectors, one per chunk. The next cell is the one that prints that count. Study note: <a href="topics/chroma.html">Chroma</a>.</p>
+      <p>Cell <code>5c208fb9</code> clears <code>chroma_db</code> and sets <code>vectordb = add_chunks(chunks)</code>. Clearing first keeps a second run from appending another 68 vectors. The saved output is <code>logistics_rag</code>. Study note: <a href="topics/chroma.html">Chroma</a>.</p>
+    </article>
+
+    <article class="cell" id="cell-e87a17ad">
+      <h3>2.1.2 Vector count <span class="tag done">done</span></h3>
+      <p>Cell <code>e87a17ad</code> prints <code>vectordb._collection.count()</code>. The saved output is 68, the same number as <code>len(chunks)</code>. One vector per chunk, none dropped and none duplicated. Study note: <a href="topics/chroma.html">Chroma</a>.</p>
     </article>
 
     <h2 id="ahead">Still to build</h2>
     <p>Read the matching study note before each stub. The notebook stubs, in order:</p>
     <ol>
-      <li>Print the number of vectors in <code>logistics_rag</code>. It should be 68.</li>
       <li>Build the chain: retriever with <code>k=4</code>, a context formatter, a grounded prompt, and <code>llama3.2:3b</code> at temperature 0.</li>
       <li>Answer one logistics question and print the source file names.</li>
       <li>Write five questions whose answers are in the files, score answer similarity and retrieval similarity, print the averages, and ask one question the files cannot answer.</li>
