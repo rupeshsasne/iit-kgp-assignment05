@@ -48,8 +48,8 @@
         <tr><td>2.2.1 Initialise the chain</td><td><span class="tag done">done</span></td></tr>
         <tr><td>2.2.2 Define <code>answer_question</code></td><td rowspan="2">7</td><td><span class="tag done">done</span></td></tr>
         <tr><td>2.2.2 One logistics question and source file names</td><td><span class="tag done">done</span></td></tr>
-        <tr><td>3.1.1 Five question / answer pairs</td><td>4</td><td><span class="tag todo">next</span></td></tr>
-        <tr><td>3.1.2 Answer and retrieval similarity</td><td>10</td><td><span class="tag todo">later</span></td></tr>
+        <tr><td>3.1.1 Five question / answer pairs</td><td>4</td><td><span class="tag done">done</span></td></tr>
+        <tr><td>3.1.2 Answer and retrieval similarity</td><td>10</td><td><span class="tag todo">next</span></td></tr>
         <tr><td>3.1.3 Averages and one unsupported question</td><td>6</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>4.1.1 Conclusion</td><td>5</td><td><span class="tag todo">later</span></td></tr>
       </tbody>
@@ -237,12 +237,16 @@
       <p>Cell <code>3ca84869</code> asks how soon a Critical regulatory breach must be reported under SOP-COM-015. The saved answer is "Two hours." The printed sources are <code>LEG-GDPR-007_Supplier_Data_Processing.md</code>, <code>SOP-COM-015_Regulatory_Breach_Report.md</code>, <code>OP-204_Incident_Management_v4.md</code>, and <code>RGM-2026_Regional_Governance_Matrix.md</code>. The two-hour row is in the SOP. Study note: <a href="topics/rag-chain.html">The RAG chain</a>.</p>
     </article>
 
+    <article class="cell" id="cell-92aa2699">
+      <h3>3.1.1 Five question / answer pairs <span class="tag done">done</span></h3>
+      <p>Cell <code>92aa2699</code> stores <code>eval_set</code>. The saved output is 5. The references are short facts from five files: a Critical breach is reported 2 hours from discovery, emergency procurement up to $5,000 is authorized by the Hub Operations Manager, a full-remote US stipend is $350 a month, a provisional supplier has 90 days from the first order, and an incident is logged in the Global Incident Registry within 24 hours of the initial notification. Study note: <a href="topics/evaluation.html">Evaluation</a>.</p>
+    </article>
+
     <h2 id="ahead">Still to build</h2>
     <p>Read the matching study note before each stub. The notebook stubs, in order:</p>
     <ol>
-      <li>Write five questions whose answers are in the files.</li>
-      <li>Answer one logistics question and print the source file names.</li>
-      <li>Write five questions whose answers are in the files, score answer similarity and retrieval similarity, print the averages, and ask one question the files cannot answer.</li>
+      <li>Score answer similarity and retrieval similarity for each of the five questions, then print the averages.</li>
+      <li>Ask one question the files cannot answer.</li>
       <li>Write the conclusion from this run's numbers, one limit, and the runtime assumption.</li>
     </ol>
     <p>When a stub is filled, this page gains a section under "What the solved cells did" and the status table moves that row to done.</p>
