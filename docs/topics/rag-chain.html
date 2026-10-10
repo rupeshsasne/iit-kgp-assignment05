@@ -31,6 +31,9 @@
       <li><strong>Model.</strong> <code>init_chat_model("llama3.2:3b", model_provider="ollama", temperature=0)</code>. The parser turns the message object into a string.</li>
     </ol>
 
+    <h2>What the notebook showed</h2>
+    <p>Cell <code>c4c90793</code> prints the names of the four objects the import cell already loaded: <code>init_chat_model</code>, <code>ChatPromptTemplate</code>, <code>RunnablePassthrough</code>, and <code>StrOutputParser</code>. Nothing else is imported. The retriever, the context formatter, the prompt, and the model call are still the cells after this one.</p>
+
     <h2>Temperature 0</h2>
     <p>Temperature scales the randomness of the next-token distribution. Zero asks for the most likely token at each step, greedily. The same question then tends to produce the same answer, which is what you want when you are about to score the answer against a reference. It does not make the model factual. A confidently wrong paraphrase at temperature 0 is still wrong. It does make a second run less likely to drift into a different wording and a different similarity score for no reason.</p>
     <p>Ollama has to be running and <code>llama3.2:3b</code> has to be pulled before this cell. The Python package <code>langchain-ollama</code> only speaks to the local server. It does not download the weights. If the server is down, the cell fails. Do not swap in another model name to make the error go away. The brief names this one.</p>

@@ -42,7 +42,10 @@
         <tr><td>2.1.2 Define <code>add_chunks</code> (<code>logistics_rag</code>)</td><td rowspan="3">11</td><td><span class="tag done">done</span></td></tr>
         <tr><td>2.1.2 Populate the collection</td><td><span class="tag done">done</span></td></tr>
         <tr><td>2.1.2 Vector count</td><td><span class="tag done">done</span></td></tr>
-        <tr><td>2.2.1 RAG chain, k=4, temperature 0</td><td>12</td><td><span class="tag todo">next</span></td></tr>
+        <tr><td>2.2.1 Chain pieces already imported</td><td rowspan="4">12</td><td><span class="tag done">done</span></td></tr>
+        <tr><td>2.2.1 Format retrieved context</td><td><span class="tag todo">next</span></td></tr>
+        <tr><td>2.2.1 Create the RAG chain</td><td><span class="tag todo">later</span></td></tr>
+        <tr><td>2.2.1 Initialise the chain</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>2.2.2 Answer plus source file names</td><td>7</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>3.1.1 Five question / answer pairs</td><td>4</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>3.1.2 Answer and retrieval similarity</td><td>10</td><td><span class="tag todo">later</span></td></tr>
@@ -203,10 +206,15 @@
       <p>Cell <code>e87a17ad</code> prints <code>vectordb._collection.count()</code>. The saved output is 68, the same number as <code>len(chunks)</code>. One vector per chunk, none dropped and none duplicated. Study note: <a href="topics/chroma.html">Chroma</a>.</p>
     </article>
 
+    <article class="cell" id="cell-c4c90793">
+      <h3>2.2.1 Chain pieces already imported <span class="tag done">done</span></h3>
+      <p>Cell <code>c4c90793</code> does not import anything new. The import cell already has <code>init_chat_model</code>, <code>ChatPromptTemplate</code>, <code>RunnablePassthrough</code>, and <code>StrOutputParser</code>. The saved output is those four names. Study note: <a href="topics/rag-chain.html">The RAG chain</a>.</p>
+    </article>
+
     <h2 id="ahead">Still to build</h2>
     <p>Read the matching study note before each stub. The notebook stubs, in order:</p>
     <ol>
-      <li>Build the chain: retriever with <code>k=4</code>, a context formatter, a grounded prompt, and <code>llama3.2:3b</code> at temperature 0.</li>
+      <li>Format the four retrieved chunks into one context string, then build the chain: retriever <code>k=4</code>, grounded prompt, <code>llama3.2:3b</code> at temperature 0.</li>
       <li>Answer one logistics question and print the source file names.</li>
       <li>Write five questions whose answers are in the files, score answer similarity and retrieval similarity, print the averages, and ask one question the files cannot answer.</li>
       <li>Write the conclusion from this run's numbers, one limit, and the runtime assumption.</li>
