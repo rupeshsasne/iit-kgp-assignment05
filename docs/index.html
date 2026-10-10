@@ -38,8 +38,8 @@
         <tr><td>1.4.1 Generate chunks for every file</td><td><span class="tag done">done</span></td></tr>
         <tr><td>1.4.1 Chunk count</td><td><span class="tag done">done</span></td></tr>
         <tr><td>1.4.1 Inspect one chunk</td><td><span class="tag done">done</span></td></tr>
-        <tr><td>2.1.1 MiniLM embeddings</td><td>5</td><td><span class="tag todo">later</span></td></tr>
-        <tr><td>2.1.2 Chroma <code>logistics_rag</code></td><td>11</td><td><span class="tag todo">later</span></td></tr>
+        <tr><td>2.1.1 MiniLM embeddings</td><td>5</td><td><span class="tag done">done</span></td></tr>
+        <tr><td>2.1.2 Chroma <code>logistics_rag</code></td><td>11</td><td><span class="tag todo">next</span></td></tr>
         <tr><td>2.2.1 RAG chain, k=4, temperature 0</td><td>12</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>2.2.2 Answer plus source file names</td><td>7</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>3.1.1 Five question / answer pairs</td><td>4</td><td><span class="tag todo">later</span></td></tr>
@@ -181,10 +181,14 @@
       <p>Cell <code>435da97a</code> takes <code>chunks[0]</code> and prints its metadata, its length, and the first 400 characters. The chunk is 568 characters from <code>SOP-COM-015_Regulatory_Breach_Report.md</code>, category <code>compliance</code>, file type <code>md</code>. The text is the document header and the start of section 1, Purpose, not the whole SOP. The four metadata keys are still there. Study note: <a href="topics/chunking.html">Chunking and overlap</a>.</p>
     </article>
 
+    <article class="cell" id="cell-e56aa4bd">
+      <h3>2.1.1 MiniLM embeddings <span class="tag done">done</span></h3>
+      <p>Cell <code>e56aa4bd</code> builds <code>embeddings</code> as <code>HuggingFaceEmbeddings</code> with model name <code>sentence-transformers/all-MiniLM-L6-v2</code>. The saved output is that model id. There is no <code>device</code> argument. Study note: <a href="topics/embeddings.html">Embeddings and MiniLM</a>.</p>
+    </article>
+
     <h2 id="ahead">Still to build</h2>
     <p>Read the matching study note before each stub. The notebook stubs, in order:</p>
     <ol>
-      <li>Load MiniLM-L6-v2 as <code>HuggingFaceEmbeddings</code>. No <code>device=</code> argument.</li>
       <li>Put the chunks in a persistent Chroma collection named <code>logistics_rag</code> and check the vector count.</li>
       <li>Build the chain: retriever with <code>k=4</code>, a context formatter, a grounded prompt, and <code>llama3.2:3b</code> at temperature 0.</li>
       <li>Answer one logistics question and print the source file names.</li>

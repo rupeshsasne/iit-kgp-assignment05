@@ -37,6 +37,9 @@
     <p>Section 1.3 embedded nothing. It weighted words. Section 2 embeds <strong>chunks</strong>, the 800-character slices, not the ten raw files. The query is embedded with the same model at question time, and Chroma returns the chunks whose vectors are nearest. If you embedded whole documents instead, you would be back to the dilution problem in the <a href="chunking.html">chunking</a> note.</p>
     <p>A useful mental test, not a number we have computed yet: the question "how quickly must a critical breach be reported?" should land nearer the chunk that contains "Critical" and "2 hours" than the chunk that contains the document-control footer, even if the question and the footer both contain the word "report". TF-IDF would lean on that shared word. MiniLM was trained to lean on the question-answer relationship. It still fails. Policies full of boilerplate can sit near each other for dull reasons. That is why we retrieve four chunks and show their file names, instead of trusting the top hit blindly.</p>
 
+    <h2>What the notebook showed</h2>
+    <p>Cell <code>e56aa4bd</code> assigns <code>embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")</code> and prints <code>embeddings.model_name</code>. The saved output is <code>sentence-transformers/all-MiniLM-L6-v2</code>. The constructor has no <code>device</code> argument, so the same cell runs on macOS and Windows. The chunks are not embedded in this cell. That happens when they are written into Chroma.</p>
+
     <h2>What the cell should not contain</h2>
     <ul>
       <li>No <code>device="cuda"</code> and no <code>device="mps"</code>.</li>
