@@ -46,7 +46,8 @@
         <tr><td>2.2.1 Format retrieved context</td><td><span class="tag done">done</span></td></tr>
         <tr><td>2.2.1 Create the RAG chain</td><td><span class="tag done">done</span></td></tr>
         <tr><td>2.2.1 Initialise the chain</td><td><span class="tag done">done</span></td></tr>
-        <tr><td>2.2.2 Answer plus source file names</td><td>7</td><td><span class="tag todo">next</span></td></tr>
+        <tr><td>2.2.2 Define <code>answer_question</code></td><td rowspan="2">7</td><td><span class="tag done">done</span></td></tr>
+        <tr><td>2.2.2 One logistics question and source file names</td><td><span class="tag todo">next</span></td></tr>
         <tr><td>3.1.1 Five question / answer pairs</td><td>4</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>3.1.2 Answer and retrieval similarity</td><td>10</td><td><span class="tag todo">later</span></td></tr>
         <tr><td>3.1.3 Averages and one unsupported question</td><td>6</td><td><span class="tag todo">later</span></td></tr>
@@ -226,10 +227,15 @@
       <p>Cell <code>305a1d7e</code> sets <code>rag_chain = create_rag_chain(vectordb)</code>. The saved output is <code>RunnableSequence</code>. No question is sent in this cell, so Ollama is not asked to generate yet. Study note: <a href="topics/rag-chain.html">The RAG chain</a>.</p>
     </article>
 
+    <article class="cell" id="cell-d562ef8b">
+      <h3>2.2.2 Define <code>answer_question</code> <span class="tag done">done</span></h3>
+      <p>Cell <code>d562ef8b</code> defines <code>answer_question</code>. It retrieves 4 chunks, asks <code>rag_chain</code> for the answer, and prints file names from chunk metadata, dropping duplicates. The saved output is the name <code>answer_question</code>. No question is asked in this cell. Study note: <a href="topics/rag-chain.html">The RAG chain</a>.</p>
+    </article>
+
     <h2 id="ahead">Still to build</h2>
     <p>Read the matching study note before each stub. The notebook stubs, in order:</p>
     <ol>
-      <li>Answer one logistics question with <code>rag_chain</code> and print the source file names. Ollama must already be serving <code>llama3.2:3b</code>.</li>
+      <li>Call <code>answer_question</code> on one logistics question. Ollama must already be serving <code>llama3.2:3b</code>.</li>
       <li>Answer one logistics question and print the source file names.</li>
       <li>Write five questions whose answers are in the files, score answer similarity and retrieval similarity, print the averages, and ask one question the files cannot answer.</li>
       <li>Write the conclusion from this run's numbers, one limit, and the runtime assumption.</li>
