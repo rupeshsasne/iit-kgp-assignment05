@@ -47,6 +47,7 @@
     </ul>
     <p>None of these numbers is an accuracy percentage.</p>
     <p>Cell <code>097154e4</code> averages the five answer similarities and the five retrieval similarities. The saved output is <code>(0.4486, 0.2788)</code>. Mean answer similarity is higher than mean retrieval similarity on this run. The stipend row pulls the answer mean up. The procurement row and the incident-registry row pull it down, because the model said the fact was missing even though a relevant file was in the four chunks.</p>
+    <p>Cell <code>00298891</code> asks for the Frankfurt hub warehouse door access code. The files do not contain one. The saved answer is that the context has no such information. The retrieved names are the governance matrix PDF, the supplier-qualification markdown, and the governance matrix markdown. The model did not invent a code. The question is not given a similarity score.</p>
 
     <h2>The five questions</h2>
     <p>Five pairs, each a question plus a reference answer. Spread them across folders if you can: a breach window from compliance, a threshold from finance, a remote-work rule from HR, a supplier step, an incident step. Five questions from the same section of the same SOP only tests that one file. The questions should be answerable from the text without arithmetic across files, because the chain retrieves four chunks and does not join tables.</p>
