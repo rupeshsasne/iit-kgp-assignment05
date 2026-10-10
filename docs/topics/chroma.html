@@ -33,6 +33,9 @@
     <h2>What gets stored besides the vector</h2>
     <p>Chroma stores the document text and the metadata dictionary beside the vector. That is how a hit can return <code>file_name</code> without a second lookup. If metadata was dropped at chunking time, the vector search still "works" and the answer function has nothing to print. The failure shows up in section 2.2.2, not in the count.</p>
 
+    <h2>What the notebook showed</h2>
+    <p>Cell <code>4dd0c4dd</code> defines <code>add_chunks</code>. The saved output is <code>('logistics_rag', 'chroma_db')</code>: collection name, then the persist directory. The function calls <code>Chroma.from_documents</code> with the MiniLM object from cell <code>e56aa4bd</code>. It does not embed the 68 chunks yet. The next cell is the one that calls it, and the cell after that prints the vector count, which should equal 68.</p>
+
     <h2>Querying</h2>
     <p>A retriever with <code>k=4</code> embeds the question with the same <code>HuggingFaceEmbeddings</code> object, asks the collection for four neighbours, and returns four <code>Document</code>s. Four is the brief. <code>k=3</code> or <code>k=5</code> changes the context the model sees and the retrieval-similarity score. Leave it at 4.</p>
     <p>The first time this cell runs it will feel slow, because it encodes every chunk. On this corpus that is seconds to a minute, not a training job. If it appears hung, it is usually the model download or the first encode, not Chroma itself.</p>
