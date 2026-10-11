@@ -1,6 +1,10 @@
 # iPe (India Pay) merchant onboarding
 
-iPe is fictional. The product requirements are in `PRD.md`. The conversation is in `chat.md`. The files under `documents/` are what the assistant is allowed to use. Nothing here is an implementation.
+iPe is fictional. The team PRD is the GitHub Pages page, not this folder:
+
+https://rupeshsasne.github.io/iit-kgp-assignment05/ipe-prd.html
+
+`PRD.md` is a short copy of that page. `chat.md` and `documents/` are the Lotus Tea House sample only.
 
 | File | What it is |
 | --- | --- |
