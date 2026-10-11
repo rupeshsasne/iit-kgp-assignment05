@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>iPe · Merchant application</title>
+  <link rel="stylesheet" href="apply.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail">
+      <a class="brand" href="ipe-prd.html">
+        <span class="mark">iPe</span>
+        <span><strong>India Pay</strong><span>Merchant onboarding</span></span>
+      </a>
+      <h2>Application</h2>
+      <ol class="steps" id="steps"></ol>
+      <div class="rail-links">
+        <a href="ipe-prd.html">Requirements</a>
+        <button type="button" id="reset">Start over</button>
+      </div>
+    </aside>
+    <section class="stage">
+      <header class="top">
+        <strong>Onboarding agent</strong>
+        <span>Cannot activate a merchant</span>
+      </header>
+      <div class="log" id="log" aria-live="polite"></div>
+      <form class="dock" id="dock">
+        <div class="chips" id="chips"></div>
+        <div class="composer">
+          <input id="box" name="message" autocomplete="off" placeholder="Your answer" aria-label="Your answer">
+          <button class="send" type="submit">Send</button>
+        </div>
+      </form>
+    </section>
+  </div>
+  <script type="module">
+    import { opening, turn } from "./agent.mjs";
+
+    const log = document.querySelector("#log");
+    const chips = document.querySelector("#chips");
+    const steps = document.querySelector("#steps");
+    const box = document.querySelector("#box");
+    const form = document.querySelector("#dock");
+    const instant = new URLSearchParams(location.search).has("instant");
+    let session = null;
+    let busy = false;
+
+    function addMessage(message) {
+      if (message.card) {
+        const card = document.createElement("article");
+        card.className = "card";
+        const missing = message.card.missing.length ? message.card.missing.join(", ") : "None";
+        card.innerHTML = "";
+        const lines = [
+          ["p", "rid", "Review " + message.card.id + " · " + message.card.status],
+          ["p", "", message.card.name + " · " + message.card.city + " · " + message.card.type],
+          ["p", "", "Volume " + message.card.volume],
+          ["p", "", "For the " + message.card.assignee],
+          ["p", "", "Missing: " + missing],
+        ];
+        for (const [tag, cls, text] of lines) {
+          const node = document.createElement(tag);
+          if (cls) node.className = cls;
+          node.textContent = text;
+          card.appendChild(node);
+        }
+        log.appendChild(card);
+      }
+      const bubble = document.createElement("article");
+      bubble.className = "msg " + (message.from === "merchant" ? "merchant" : "agent");
+      const body = document.createElement("p");
+      body.textContent = message.text;
+      bubble.appendChild(body);
+      if (message.cites) {
+        const cite = document.createElement("p");
+        cite.className = "cites";
+        cite.textContent = message.cites;
+        bubble.appendChild(cite);
+      }
+      log.appendChild(bubble);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function drawFields(fields) {
+      steps.replaceChildren();
+      for (const field of fields) {
+        const item = document.createElement("li");
+        item.className = field.state;
+        const dot = document.createElement("i");
+        const copy = document.createElement("div");
+        const label = document.createElement("b");
+        label.textContent = field.label;
+        const value = document.createElement("em");
+        value.textContent = field.value || (field.state === "now" ? "Answering" : "");
+        copy.append(label, value);
+        item.append(dot, copy);
+        steps.appendChild(item);
+      }
+    }
+
+    function drawChips(labels) {
+      chips.replaceChildren();
+      for (const label of labels || []) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = label;
+        button.addEventListener("click", () => send(label));
+        chips.appendChild(button);
+      }
+    }
+
+    function show(result) {
+      session = result.session;
+      drawFields(result.fields);
+      drawChips(result.chips);
+      box.placeholder = result.session.phase === "confirm"
+        ? "Submit, or ask why"
+        : result.session.phase === "done"
+          ? "Ask about the decision"
+          : "Your answer, or ask why";
+    }
+
+    function send(text) {
+      const value = text.trim();
+      if (!value || busy) return;
+      busy = true;
+      addMessage({ from: "merchant", text: value });
+      box.value = "";
+      const result = turn(session, value);
+      const reveal = () => {
+        for (const message of result.messages) addMessage(message);
+        show(result);
+        busy = false;
+        box.focus();
+      };
+      if (instant) reveal();
+      else window.setTimeout(reveal, 280);
+    }
+
+    function boot() {
+      log.replaceChildren();
+      const result = opening();
+      for (const message of result.messages) addMessage(message);
+      show(result);
+      box.value = "";
+      box.focus();
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      send(box.value);
+    });
+    document.querySelector("#reset").addEventListener("click", boot);
+    boot();
+  </script>
+</body>
+</html>
