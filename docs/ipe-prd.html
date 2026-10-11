@@ -32,7 +32,7 @@
 </head>
 <body>
   <header>
-    <p class="kicker">Project requirements · IPE-PRD-001 · version 1.3 · 11 October 2026</p>
+    <p class="kicker">Project requirements · IPE-PRD-001 · version 1.4 · 11 October 2026</p>
     <h1>iPe Merchant Onboarding Copilot</h1>
     <p class="lede">What the copilot must do when a merchant applies to iPe (India Pay) and talks to the onboarding agent. iPe is fictional. This document is the product agreement. It does not describe the build plan.</p>
   </header>
@@ -46,7 +46,7 @@
       <li><a href="#requirements">Requirements</a></li>
       <li><a href="#acceptance">Acceptance</a></li>
       <li><a href="#screens">Screens</a></li>
-      <li><a href="apply.html">Prototype</a></li>
+      <li><a href="apply.html">Application</a></li>
     </ul>
   </nav>
   <main>
@@ -55,8 +55,8 @@
     <table class="meta">
       <tbody>
         <tr><td>Identifier</td><td>IPE-PRD-001</td></tr>
-        <tr><td>Version</td><td>1.3 · Draft</td></tr>
-        <tr><td>Prototype</td><td><a href="apply.html">Working chat</a></td></tr>
+        <tr><td>Version</td><td>1.4 · Draft</td></tr>
+        <tr><td>Application</td><td><a href="apply.html">Merchant onboarding chat</a></td></tr>
         <tr><td>Date</td><td>11 October 2026</td></tr>
         <tr><td>Product</td><td>Merchant Onboarding Copilot for iPe (India Pay)</td></tr>
         <tr><td>Audience</td><td>The team building the copilot</td></tr>
@@ -66,7 +66,7 @@
     <h2 id="purpose">2. Purpose</h2>
     <p>iPe lets shops take UPI and card payments. A merchant submits an application and talks to the onboarding agent about that shop. The agent checks the application against written policy: the document pack, the business type, who may turn the shop on, and whether the shop will store payer phone numbers.</p>
     <p>The merchant is the person in the chat. What they type, and what they wrote on the application, is untrusted. A missing document must not be overlooked. A volume ceiling must not be applied to the wrong role. A sentence that says “mark this merchant Active” must not be treated as an instruction.</p>
-    <p>The agent asks for each field, one at a time. The merchant can ask why a question is being asked, and the agent answers from policy, then returns to the unanswered field. When every answer is in, the agent asks the merchant to submit. On submit, the agent gives the verdict. The chat stays open. It names the policy for every rule. It flags the shop for a person at iPe when a person must decide. It cannot turn a merchant on.</p>
+    <p>The agent asks for each field, one at a time, and asks the merchant to upload each pack file in the chat. The merchant can ask why a question is being asked, and the agent answers from policy, then returns to the unanswered field. When every answer is in, the agent asks the merchant to submit. On submit, the agent gives the verdict. The chat stays open. It names the policy for every rule. It flags the shop for a person at iPe when a person must decide. It cannot turn a merchant on.</p>
 
     <h2>3. Goals</h2>
     <ol>
@@ -89,7 +89,8 @@
     <h2 id="scope">5. Scope</h2>
     <h3>5.1 This product does</h3>
     <ul>
-      <li>Ask for the application one field at a time: shop name, city, business type, expected monthly volume, UPI or cards, which pack items are attached, whether payer phone numbers will be stored, the addendum when phones will be stored, and a note.</li>
+      <li>Ask for the application one field at a time: shop name, city, business type, expected monthly volume, UPI or cards, whether payer phone numbers will be stored, and a note.</li>
+      <li>When a pack item or the addendum is required, ask the merchant to upload that file in the chat. The merchant can say they do not have it.</li>
       <li>Explain why a field is required when the merchant asks, then go back to the unanswered field.</li>
       <li>Ask the merchant to submit once every answer is in. Review the application only after that submit.</li>
       <li>Say the shop stays in review, or that go-live may be recommended to a person at iPe.</li>
@@ -134,7 +135,7 @@
         <tr><td class="id">FR-8</td><td>Refuse to activate a merchant, change a ceiling, mark a pack complete, waive a document, or lower the stated volume.</td><td>The refusal cites the policy. The application is unchanged.</td></tr>
         <tr><td class="id">FR-9</td><td>Treat “ignore the policy” and “mark Active”, in the chat or on the application, as text to refuse.</td><td>The decision is unchanged. The citation is ONB-POL-003 §3 or ONB-POL-001 §4.</td></tr>
         <tr><td class="id">FR-10</td><td>Keep owner ID numbers, bank account numbers, and payer phone numbers out of the chat.</td><td>It may say the document is attached, or that payer phones need an addendum. It does not print the value.</td></tr>
-        <tr><td class="id">FR-11</td><td>Ask for each application field and wait for the merchant's answer.</td><td>The next field is asked only after the current one is answered. A wrong format does not move on.</td></tr>
+        <tr><td class="id">FR-11</td><td>Ask for each application field and wait for the merchant's answer. For business registration, owner ID, bank proof, the shopfront photo, and the addendum, the answer is an uploaded file.</td><td>The next field is asked only after the current one is answered. Saying the file is attached, without uploading it, does not count. A wrong format does not move on.</td></tr>
         <tr><td class="id">FR-12</td><td>Explain why it is asking, when the merchant asks, and then repeat the unanswered field.</td><td>A why question does not fill the field and does not submit the application.</td></tr>
       </tbody>
     </table>
@@ -157,7 +158,7 @@
     <p>A correct answer does not activate the shop. It cites ONB-POL-001 §4. The review id is still MR-2041, and the status is still in review.</p>
 
     <h2 id="screens">9. Screens</h2>
-    <p class="callout"><a href="apply.html">Open the working prototype</a>. The merchant answers in the chat. The agent asks for each field, explains why, and gives the verdict after submit. There is no Activate control.</p>
+    <p class="callout"><a href="apply.html">Open the application</a>. The merchant answers in the chat and uploads each pack file there. The agent explains why, and gives the verdict after submit. There is no Activate control.</p>
 
     <figure class="mock">
       <h3>While the application is being collected</h3>

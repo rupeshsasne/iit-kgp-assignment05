@@ -36,34 +36,42 @@ const FIELDS = [
   {
     id: "registration",
     label: "Business registration",
-    ask: "Is the business registration attached?",
-    why: "The pack needs four items before anyone can turn the shop on. Business registration is the first (ONB-POL-001 §2).",
-    kind: "yesno",
-    chips: ["Yes, attached", "Not attached"],
+    ask: "Upload the business registration. A PDF or a photo of the document is fine.",
+    why: "The pack needs four items before anyone can turn the shop on. Business registration is the first. Upload the file here (ONB-POL-001 §2).",
+    kind: "file",
+    accept: ".pdf,.png,.jpg,.jpeg,.webp",
+    uploadLabel: "Upload registration",
+    chips: ["I don't have this file"],
   },
   {
     id: "ownerId",
     label: "Owner government ID",
-    ask: "Is the owner's government ID attached? Don't send the ID number. Yes or no is enough.",
-    why: "The pack needs the owner's government ID on file. I don't want the number in this chat (ONB-POL-001 §2, ONB-POL-003 §1).",
-    kind: "yesno",
-    chips: ["Yes, attached", "Not attached"],
+    ask: "Upload the owner's government ID. Don't type the ID number.",
+    why: "The pack needs the owner's government ID on file. Upload the document. I will not read the number back (ONB-POL-001 §2, ONB-POL-003 §1).",
+    kind: "file",
+    accept: ".pdf,.png,.jpg,.jpeg,.webp",
+    uploadLabel: "Upload government ID",
+    chips: ["I don't have this file"],
   },
   {
     id: "bank",
     label: "Bank proof",
-    ask: "Is bank proof in the shop's legal name attached? Don't send the account number.",
-    why: "Bank proof must be in the shop's legal name. I only need to know that it is attached, not the account number (ONB-POL-001 §2).",
-    kind: "yesno",
-    chips: ["Yes, attached", "Not attached"],
+    ask: "Upload bank proof in the shop's legal name. A cancelled cheque or a statement is enough. Don't type the account number.",
+    why: "Bank proof must be in the shop's legal name. Upload the file. I will not repeat an account number (ONB-POL-001 §2).",
+    kind: "file",
+    accept: ".pdf,.png,.jpg,.jpeg,.webp",
+    uploadLabel: "Upload bank proof",
+    chips: ["I don't have this file"],
   },
   {
     id: "photo",
     label: "Shopfront photo",
-    ask: "Is a photo of the shopfront, taken in the last 90 days, attached?",
+    ask: "Upload a photo of the shopfront, taken in the last 90 days.",
     why: "The pack needs a shopfront photo from the last 90 days, so the shop can be seen as it is now (ONB-POL-001 §2).",
-    kind: "yesno",
-    chips: ["Yes, attached", "Not attached"],
+    kind: "file",
+    accept: ".png,.jpg,.jpeg,.webp",
+    uploadLabel: "Upload shopfront photo",
+    chips: ["I don't have this file"],
   },
   {
     id: "phones",
@@ -76,10 +84,12 @@ const FIELDS = [
   {
     id: "addendum",
     label: "Data-processing addendum",
-    ask: "Is a signed data-processing addendum attached? It has to be its own document.",
-    why: "Storing payer phone numbers needs a signed addendum before go-live. Writing it in this chat does not count (ONB-POL-003 §2).",
-    kind: "yesno",
-    chips: ["Yes, attached", "Not attached"],
+    ask: "Upload the signed data-processing addendum. It has to be its own document.",
+    why: "Storing payer phone numbers needs a signed addendum before go-live. Upload that file. A sentence in this chat does not count (ONB-POL-003 §2).",
+    kind: "file",
+    accept: ".pdf,.png,.jpg,.jpeg,.webp",
+    uploadLabel: "Upload addendum",
+    chips: ["I don't have this file"],
     when: (answers) => answers.phones === true,
   },
   {
@@ -183,6 +193,19 @@ function parseCity(text) {
   return value;
 }
 
+function parseFile(text) {
+  const value = text.trim();
+  if (/^(i don't have|i do not have|don't have|do not have|not attached|no file|not yet|missing)\b/i.test(value) || /^(no|nope)[.!\s]*$/i.test(value)) {
+    return false;
+  }
+  const named = value.match(/^attached:\s*(.+)$/i);
+  if (!named) return null;
+  const name = named[1].trim().replace(/\s+/g, " ");
+  if (name.length < 3 || name.length > 140) return null;
+  if (!/\.[a-z0-9]{2,5}$/i.test(name)) return null;
+  return name;
+}
+
 function parseNote(text) {
   if (/^(none|nothing|no|n\/a|na|skip|nope)[.!\s]*$/i.test(text.trim())) return "";
   return text.trim().slice(0, 400);
@@ -214,7 +237,8 @@ function displayValue(session, field) {
   if (value === undefined) return "";
   if (field.id === "volume") return formatINR(value) + " a month";
   if (field.id === "phones") return value ? "Yes, will store" : "No";
-  if (field.kind === "yesno") return value ? "Attached" : "Not attached";
+  if (field.kind === "file") return value ? value : "Not provided";
+  if (field.kind === "yesno") return value ? "Yes" : "No";
   if (field.id === "type") return value.charAt(0).toUpperCase() + value.slice(1);
   if (field.id === "note") return value ? redact(value) : "None";
   return String(value);
@@ -239,6 +263,9 @@ function pack(session, text, extra = {}) {
     messages: [message],
     chips: extra.chips || (field && field.chips) || [],
     fields: fieldState(session),
+    needsFile: !!(field && field.kind === "file"),
+    fileAccept: (field && field.accept) || "",
+    uploadLabel: (field && field.uploadLabel) || "Upload file",
   };
 }
 
@@ -394,6 +421,7 @@ function storeAnswer(session, field, value) {
 
 function readAnswer(field, text) {
   if (field.kind === "yesno") return parseYesNo(text);
+  if (field.kind === "file") return parseFile(text);
   if (field.id === "name") return parseName(text);
   if (field.id === "city") return parseCity(text);
   if (field.id === "type") return parseType(text);
@@ -408,6 +436,7 @@ function invalidHint(field) {
   if (field.id === "type") return "Say restaurant, grocery, retail, or the type that applies.";
   if (field.id === "products") return "Say UPI, cards, or both.";
   if (field.kind === "yesno") return "Say yes or no.";
+  if (field.kind === "file") return "Upload the file, or say you don't have it.";
   if (field.id === "city") return "Give the city name.";
   return "Give a short answer.";
 }
@@ -520,7 +549,7 @@ export function turn(session, input) {
   }
 
   const field = nextField(session);
-  if (field.id !== "volume" && field.id !== "note" && hasSecretNumber(text)) {
+  if (field.kind !== "file" && field.id !== "volume" && field.id !== "note" && hasSecretNumber(text)) {
     return pack(session, "Don't put an ID number, account number, or phone number in the chat. I will not repeat it.\n\n" + field.ask, {
       chips: field.chips || [],
     });
