@@ -1,8 +1,10 @@
 # iPe (India Pay) — Merchant Onboarding Copilot
 
-**Read this on GitHub Pages:** https://rupeshsasne.github.io/iit-kgp-assignment05/ipe-prd.html
+The exhaustive PRD the team should read is the GitHub Pages page:
 
-Track B product and engineering spec. iPe is fictional. Every numbered Track B item in the coverage table is in scope.
+https://rupeshsasne.github.io/iit-kgp-assignment05/ipe-prd.html
+
+That page is the spec. This file is only a pointer, so the two copies do not drift.
 
 ## Constraint
 
